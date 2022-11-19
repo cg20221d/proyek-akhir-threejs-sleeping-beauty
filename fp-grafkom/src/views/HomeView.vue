@@ -8,6 +8,14 @@
 
 <script type="module">
 import * as Three from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import back from '../assets/Daylight-Box_Back.png'
+import bottom from '../assets/Daylight-Box_Bottom.png'
+import front from '../assets/Daylight-Box_Front.png'
+import left from '../assets/Daylight-Box_Left.png'
+import right from '../assets/Daylight-Box_Right.png'
+import top from '../assets/Daylight-Box_Top.png'
+
 export default {
   data() {
     return {
@@ -29,25 +37,51 @@ export default {
 
       this.camera = new Three.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.01, 10);
       this.camera.position.z = 1;
+      // this.camera = new Three.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 45, 30000);
+      // this.camera.position.set(-900,-200,-900);
 
       this.scene = new Three.Scene();
 
-      let geometry = new Three.BoxGeometry(0.2, 0.2, 0.2);
-      let material = new Three.MeshNormalMaterial();
+      // let geometry = new Three.BoxGeometry(0.2, 0.2, 0.2);
+      // let material = new Three.MeshNormalMaterial();
 
-      this.mesh = new Three.Mesh(geometry, material);
-      this.scene.add(this.mesh);
+      // this.mesh = new Three.Mesh(geometry, material);
+      // this.scene.add(this.mesh);
+
+      // this.controls.addEventListener(this.camera,this.renderer);
+
+      let materialArray = [];
+      let texture_bk = new Three.TextureLoader().load(back);
+      let texture_bt = new Three.TextureLoader().load(bottom);
+      let texture_ft = new Three.TextureLoader().load(front);
+      let texture_lf = new Three.TextureLoader().load(left);
+      let texture_rt = new Three.TextureLoader().load(right);
+      let texture_tp = new Three.TextureLoader().load(top);
+      
+      materialArray.push(new Three.MeshBasicMaterial({map: texture_bk}));
+      materialArray.push(new Three.MeshBasicMaterial({map: texture_bt}));
+      materialArray.push(new Three.MeshBasicMaterial({map: texture_ft}));
+      materialArray.push(new Three.MeshBasicMaterial({map: texture_lf}));
+      materialArray.push(new Three.MeshBasicMaterial({map: texture_rt}));
+      materialArray.push(new Three.MeshBasicMaterial({map: texture_tp}));
+
+      let skyboxGeo = new Three.BoxGeometry(0.2,0.2,0.2);
+      this.skybox = new Three.Mesh(skyboxGeo, materialArray);
+      this.scene.add(this.skybox);
 
       this.renderer = new Three.WebGLRenderer({antialias: true});
       this.renderer.setSize(window.innerWidth, window.innerHeight);
+      this.controls = new OrbitControls(this.camera, this.renderer.domElement);
       document.body.appendChild(this.renderer.domElement );
 
+      this.animate();
     },
     animate() {
         requestAnimationFrame(this.animate);
-        this.mesh.rotation.x = this.mesh.rotation.x + 0.01;
-        this.mesh.rotation.y += 0.02;
+        // this.skybox.rotation.x = this.skybox.rotation.x + 0.01;
+        // this.skybox.rotation.y += 0.02;
         this.renderer.render(this.scene, this.camera)
+        this.controls.update()
         // console.log( this.mesh.rotation.y += 0.02)
     },
   gettingBigger() {
