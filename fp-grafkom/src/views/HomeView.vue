@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <button @click="changeButtonStat()" :disabled="!isActive"> Add Water</button>
-    <h1>Jumlah air : {{air}} </h1>
+    <h1>Jumlah Air: {{air}} </h1>
 
   </div>
 </template>
@@ -9,6 +9,7 @@
 <script type="module">
 import * as Three from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader'
 import back from '../assets/Daylight-Box_Back.png'
 import bottom from '../assets/Daylight-Box_Bottom.png'
 import front from '../assets/Daylight-Box_Front.png'
@@ -38,7 +39,7 @@ export default {
 
       this.camera = new Three.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 45, 30000);
       // this.camera.position.z = 0.5;
-      this.camera.position.set(-900,-200,-900);
+      this.camera.position.set(45,30,45);
 
       this.renderer = new Three.WebGLRenderer({antialias: true});
       this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -47,6 +48,7 @@ export default {
       this.controls.addEventListener('change',this.renderer);
       this.controls.minDistance = 500;
       this.controls.maxDistance = 1500;
+      this.controls.rotateSpeed = 0.25;
       // this.camera = new Three.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 45, 30000);
 
       // let geometry = new Three.BoxGeometry(0.2, 0.2, 0.2);
@@ -74,6 +76,29 @@ export default {
 
       for(let i=0;i<6;i++)
         materialArray[i].side = Three.BackSide;
+
+        const loader = new GLTFLoader()
+
+      const ambientLight = new Three.HemisphereLight(
+        0xffffff, // bright sky color
+        0x222222, // dim ground color
+        1 // intensity
+      )
+      const mainLight = new Three.DirectionalLight(0xffffff, 4.0)
+      mainLight.position.set(10, 10, 10)
+      this.scene.add(ambientLight, mainLight)
+
+      loader.load(
+        '/three-assets/temp_dog1.glb',
+        gltf => {
+          var doggo = gltf.scene;
+          doggo.scale.set(50, 50, 50);
+          this.scene.add(doggo)
+          // doggo.position.y = 150;
+        },
+        undefined,
+        undefined
+      )
 
       let skyboxGeo = new Three.BoxGeometry(10000,10000,10000);
       this.skybox = new Three.Mesh(skyboxGeo, materialArray);
