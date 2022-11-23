@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <button @click="changeButtonStat()" :disabled="!isActive"> Add Water</button>
-    <h1>Jumlah Air: {{air}} </h1>
+    <h1>Jumlah Air: {{ air }} </h1>
 
   </div>
 </template>
@@ -108,9 +108,21 @@ export default {
       
       // Make the water-o-meter
       const geometry = new Three.SphereGeometry( 25 , 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-      const material = new Three.MeshBasicMaterial( { color: 0xE8FFFF, side: Three.BackSide, wireframe: false } );
+      const material = new Three.MeshPhysicalMaterial({
+        metalness: 0.888,
+        roughness: .05,
+        envMapIntensity: 0.9,
+        clearcoat: 1,
+        transparent: true,
+        // transmission: .95,
+        opacity: .5,
+        reflectivity: 0.2,
+        refractionRatio: 0.985,
+        ior: 0.9,
+        side: Three.BackSide,
+      });
       material.transparent = true;
-      material.opacity = 0.2;
+      material.opacity = 0.3;
       const sphere1 = new Three.Mesh( geometry, material );
       const sphere2 = new Three.Mesh( geometry, material );
       sphere1.translateY(200).translateX( -100 ).translateZ( 100 );
@@ -127,10 +139,16 @@ export default {
       this.scene.add( cylinder1 );
       let height = this.air/8 * 300;
       const cylGeometry2 = new Three.CylinderGeometry(20, 20, height, 32, 16 );
-      const cylMaterial2 = new Three.MeshBasicMaterial( { color: 0x0000ff, side: Three.BackSide } );
+      const cylMaterial2 = new Three.MeshBasicMaterial( { color: 0xa9dcec, 
+        transparent: true,
+        opacity: 0.7,
+        reflectivity: 0.2,
+        refractionRatio: 0.5,
+        side: Three.BackSide 
+      } );
       waterometer = new Three.Mesh( cylGeometry2, cylMaterial2 );
-      waterometer.translateY( 50 );
-      waterometer.translateY(-(300 - height)/2);
+      waterometer.translateY( 0 );
+      waterometer.translateY(-(200 - height)/2);
       waterometer.translateX( -100 );
       waterometer.translateZ( 100 );
       // waterometer
@@ -148,7 +166,7 @@ export default {
       // button2.translateX(-0.7);
       // button2.rotateX(Math.PI/2);
       // this.scene.add( button2 );
-
+      
       this.animate();
     },
     animate() {
@@ -179,8 +197,8 @@ export default {
     console.log(this.air);
     if(this.air <= 8) {
       waterometer.geometry.dispose();
-      waterometer.geometry = new Three.CylinderGeometry(20, 20, this.air/8 * 300, 32, 16 );
-      waterometer.position.y = (-(200 - this.air/8 * 300)/2);
+      waterometer.geometry = new Three.CylinderGeometry(20, 20, this.air/8 * 299, 32, 16 );
+      waterometer.position.y = (-(200 - this.air/8 * 299)/2);
     }
 
     this.isActive = false;
