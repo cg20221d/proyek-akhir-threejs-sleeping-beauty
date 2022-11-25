@@ -1,12 +1,10 @@
 import "./styles/styles.css"
 <template>
-  <div class="home">
-    <button @click="changeButtonStat()" :disabled="!isActive"> Add Water</button>
+    <button @click="changeButtonStat()" :disabled="!isActive" class="btn"> Add Water</button>
     <div class="row box">
       <div class="column"><h1 class="puppy"> PUPPY </h1></div>
-      <div class="column"><h1>Jumlah Air: {{ air }} </h1></div>
+      <div class="column jumlah-air"><h1>Jumlah Air: {{ air }} </h1></div>
     </div>
-  </div>
   <div class="welcome-text">
   <h2 class="welcome-back">Welcome Back,</h2>
   <h1 class="name">Fadhil</h1>
