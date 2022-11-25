@@ -108,7 +108,7 @@ export default {
       this.scene.add(this.skybox);
       
       // Make the water-o-meter
-      const geometry = new Three.SphereGeometry( 25 , 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+      // const geometry = new Three.SphereGeometry( 25 , 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
       const material = new Three.MeshPhysicalMaterial({
         metalness: 0.888,
         roughness: .05,
@@ -124,22 +124,24 @@ export default {
       });
       material.transparent = true;
       material.opacity = 0.3;
-      const sphere1 = new Three.Mesh( geometry, material );
-      const sphere2 = new Three.Mesh( geometry, material );
-      sphere1.translateY(200).translateX( -100 ).translateZ( 100 );
-      sphere2.translateY(-100).translateX( -100 ).translateZ( 100 ).rotateX(Math.PI);
-      this.scene.add( sphere1 );
-      this.scene.add( sphere2 );
+      // const sphere1 = new Three.Mesh( geometry, material );
+      // const sphere2 = new Three.Mesh( geometry, material );
+      // sphere1.translateY(200).translateX( -100 );
+      // sphere2.translateY(-100).translateX( -100 ).rotateX(Math.PI);
+      // this.scene.add( sphere1 );
+      // this.scene.add( sphere2 );
 
-      const cylGeometry1 = new Three.CylinderGeometry(25, 25, 300, 32, 16, true, );
+      // const cylGeometry1 = new Three.CylinderGeometry(25, 25, 200, 32, 16, true, );
+      const cylGeometry1 = new Three.CapsuleGeometry(25, 200, 32, 16 );;
       // const cylMaterial1 = new Three.MeshBasicMaterial( { color: 0xff00ff, side: Three.BackSide, wireframe: true } );
       const cylinder1 = new Three.Mesh( cylGeometry1, material );
       cylinder1.translateY( 50 );
       cylinder1.translateX( -100 );
-      cylinder1.translateZ( 100 );
+      // cylinder1.translateZ( 100 );
       this.scene.add( cylinder1 );
-      let height = this.air/8 * 300;
-      const cylGeometry2 = new Three.CylinderGeometry(20, 20, height, 32, 16 );
+      let height = this.air/8 * 200;
+      // const waterGeo = new Three.CylinderGeometry(20, 20, height, 32, 16 );
+      const waterGeo = new Three.CapsuleGeometry(20, height, 32, 16 );
       const cylMaterial2 = new Three.MeshBasicMaterial( { color: 0xa9dcec, 
         transparent: true,
         opacity: 0.7,
@@ -147,11 +149,9 @@ export default {
         refractionRatio: 0.5,
         side: Three.BackSide 
       } );
-      waterometer = new Three.Mesh( cylGeometry2, cylMaterial2 );
-      waterometer.translateY( 0 );
-      waterometer.translateY(-(200 - height)/2);
+      waterometer = new Three.Mesh( waterGeo, cylMaterial2 );
+      waterometer.translateY(-(100 - height)/2);
       waterometer.translateX( -100 );
-      waterometer.translateZ( 100 );
       // waterometer
       this.scene.add( waterometer );
 
@@ -198,20 +198,21 @@ export default {
     console.log(this.air);
     if(this.air <= 8) {
       waterometer.geometry.dispose();
-      waterometer.geometry = new Three.CylinderGeometry(20, 20, this.air/8 * 299, 32, 16 );
-      waterometer.position.y = (-(200 - this.air/8 * 299)/2);
+      // waterometer.geometry = new Three.CylinderGeometry(20, 20, this.air/8 * 200, 32, 16 );
+      waterometer.geometry = new Three.CapsuleGeometry(20, this.air/8 * 200, 32, 16 );
+      waterometer.position.y = (-(100 - this.air/8 * 200)/2);
     }
 
-    this.isActive = false;
-    var x = setInterval(() => {    
-               this.isActive = false;
-               this.count++;
-               if (this.count == 3) {
-                this.count = 0;
-                this.isActive = true;
-                clearInterval(x);
-               }  
-          }, 1000);        
+    // this.isActive = false;
+    // var x = setInterval(() => {    
+    //            this.isActive = false;
+    //            this.count++;
+    //            if (this.count == 3) {
+    //             this.count = 0;
+    //             this.isActive = true;
+    //             clearInterval(x);
+    //            }  
+    //       }, 1000);        
      },
 },
 }
