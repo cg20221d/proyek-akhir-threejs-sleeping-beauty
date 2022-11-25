@@ -47,7 +47,7 @@ export default {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(this.renderer.domElement );
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-      this.controls.addEventListener('change',this.renderer);
+      this.controls.update();
       this.controls.minDistance = 500;
       this.controls.maxDistance = 1500;
       this.controls.rotateSpeed = 0.25;
