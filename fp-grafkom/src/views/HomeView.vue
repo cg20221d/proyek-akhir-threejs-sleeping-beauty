@@ -1,8 +1,11 @@
+import "./styles/styles.css"
 <template>
   <div class="home">
     <button @click="changeButtonStat()" :disabled="!isActive"> Add Water</button>
-    <h1>Jumlah Air: {{ air }} </h1>
-
+    <div class="row">
+      <div class="column"><h1 class="puppy"> PUPPY </h1></div>
+      <div class="column"><h1>Jumlah Air: {{ air }} </h1></div>
+    </div>
   </div>
 </template>
 
