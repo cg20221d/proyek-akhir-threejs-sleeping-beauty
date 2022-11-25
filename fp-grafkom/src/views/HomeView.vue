@@ -44,13 +44,13 @@ export default {
 
       this.camera = new Three.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 45, 30000);
       // this.camera.position.z = 0.5;
-      this.camera.position.set(45,30,45);
+      this.camera.position.set(0, 10,45);
 
       this.renderer = new Three.WebGLRenderer({antialias: true});
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(this.renderer.domElement );
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-      this.controls.addEventListener('change',this.renderer);
+      this.controls.update();
       this.controls.minDistance = 500;
       this.controls.maxDistance = 1500;
       this.controls.rotateSpeed = 0.25;
@@ -98,6 +98,7 @@ export default {
         gltf => {
           var doggo = gltf.scene;
           doggo.scale.set(50, 50, 50);
+          doggo.rotateY(-Math.PI/7)
           this.scene.add(doggo)
           // doggo.position.y = 150;
         },
