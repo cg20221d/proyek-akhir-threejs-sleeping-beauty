@@ -162,18 +162,29 @@ export default {
       // waterometer
       this.scene.add( waterometer );
 
-      // const buttonGeometry = new Three.CylinderGeometry(0.1, 0.1, 0.07, 32, 16)
-      // const buttonMaterial1 = new Three.MeshBasicMaterial( { color: 0x00ff00, side: Three.BackSide } );
-      // const button1 = new Three.Mesh( buttonGeometry, buttonMaterial1 );
-      // button1.translateX(-0.4);
-      // button1.rotateX(Math.PI/2);
-      // this.scene.add( button1 );
+      // Button
+      var airX, airY, airZ;
+      airY = -100;
+      airZ = 120;
+      var airAtasRad = 92.364
+      var airBawah = new Three.SphereGeometry(50/4 , 32, 16, 0);
+      var airAtas = new Three.ConeGeometry(airAtasRad/8, 111.48/4, 32);
+      const airMat = new Three.MeshBasicMaterial( { color: 0xa9dcec } );
+      const airBawahMesh = new Three.Mesh( airBawah, airMat );
+      const airAtasMesh = new Three.Mesh( airAtas, airMat );
+      airBawahMesh.translateY(airY).translateZ(airZ);
+      airAtasMesh.translateY(airY + 19.129/4 + (111.48/8)).translateZ(airZ);
 
-      // const buttonMaterial2 = new Three.MeshBasicMaterial( { color: 0xff0000, side: Three.BackSide } );
-      // const button2 = new Three.Mesh( buttonGeometry, buttonMaterial2 );
-      // button2.translateX(-0.7);
-      // button2.rotateX(Math.PI/2);
-      // this.scene.add( button2 );
+      this.scene.add( airBawahMesh );
+      this.scene.add( airAtasMesh );
+
+      const buttonGeo = new Three.SphereGeometry( 35 , 32, 16, 0)
+      const buttonMat = material;
+      const button = new Three.Mesh( buttonGeo, buttonMat);
+
+      button.translateY(airY+10).translateZ(airZ);
+
+      this.scene.add( button );
       
       this.animate();
     },
