@@ -139,7 +139,7 @@ export default {
       // this.scene.add( sphere2 );
 
       // const cylGeometry1 = new Three.CylinderGeometry(25, 25, 200, 32, 16, true, );
-      const cylGeometry1 = new Three.CapsuleGeometry(25, 200, 32, 16 );;
+      const cylGeometry1 = new Three.CapsuleGeometry(25, 200, 32, 16 );
       // const cylMaterial1 = new Three.MeshBasicMaterial( { color: 0xff00ff, side: Three.BackSide, wireframe: true } );
       const cylinder1 = new Three.Mesh( cylGeometry1, material );
       cylinder1.translateY( 50 );
@@ -163,7 +163,7 @@ export default {
       this.scene.add( waterometer );
 
       // Button
-      var airX, airY, airZ;
+      var airY, airZ;
       airY = -100;
       airZ = 120;
       var airAtasRad = 92.364
