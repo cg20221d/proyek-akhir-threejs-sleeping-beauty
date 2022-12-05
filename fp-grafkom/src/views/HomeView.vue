@@ -100,13 +100,13 @@ export default {
       this.scene.add(ambientLight, mainLight)
 
       loader.load(
-        '/three-assets/temp_dog1.glb',
+        '/three-assets/dog1.gltf',
         gltf => {
           var doggo = gltf.scene;
-          doggo.scale.set(50, 50, 50);
+          doggo.scale.set(200, 200, 200);
           doggo.rotateY(-Math.PI/7)
           this.scene.add(doggo)
-          // doggo.position.y = 150;
+          doggo.position.y = -17;
         },
         undefined,
         undefined
