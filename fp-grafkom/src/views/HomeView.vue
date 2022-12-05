@@ -104,7 +104,8 @@ export default {
         gltf => {
           var doggo = gltf.scene;
           doggo.scale.set(200, 200, 200);
-          doggo.rotateY(-Math.PI/7)
+          // doggo.rotateY(-Math.PI/7)
+          doggo.rotateY(-600)
           this.scene.add(doggo)
           doggo.position.y = -17;
         },
@@ -145,7 +146,7 @@ export default {
       // const cylMaterial1 = new Three.MeshBasicMaterial( { color: 0xff00ff, side: Three.BackSide, wireframe: true } );
       const cylinder1 = new Three.Mesh( cylGeometry1, material );
       cylinder1.translateY( 50 );
-      cylinder1.translateX( -100 );
+      cylinder1.translateX( -280 );
       // cylinder1.translateZ( 100 );
       this.scene.add( cylinder1 );
       let height = this.air/8 * 200;
@@ -160,7 +161,7 @@ export default {
       } );
       waterometer = new Three.Mesh( waterGeo, cylMaterial2 );
       waterometer.translateY(-(100 - height)/2);
-      waterometer.translateX( -100 );
+      waterometer.translateX( -280 );
       // waterometer
       this.scene.add( waterometer );
 
@@ -234,7 +235,7 @@ export default {
       const bawah = new Three.Mesh(tanah_bawah, earthMaterial)
       jitter(bawah, 0);
       bawah.scale.set(3.4, 1.3, 3);
-      bawah.translateY(6.4)
+      bawah.translateY(6.0)
 
       this.ground.add(atas);
       this.ground.add(dasar);
@@ -244,8 +245,9 @@ export default {
 
       this.ground.scale.set(15,15, 15)
       this.ground.rotateX(Math.PI)
-      this.ground.translateY(112)
-      this.ground.translateY(7)
+      this.ground.translateY(117)
+      // this.ground.translateY(7)
+      this.ground.translateZ(80)
     },
     animate() {
         this.renderer.render(this.scene, this.camera)
