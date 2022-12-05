@@ -100,7 +100,7 @@ export default {
       this.scene.add(ambientLight, mainLight)
 
       loader.load(
-        '/three-assets/temp_dog1.glb',
+        '/three-assets/dog1.glb',
         gltf => {
           var doggo = gltf.scene;
           doggo.scale.set(50, 50, 50);
