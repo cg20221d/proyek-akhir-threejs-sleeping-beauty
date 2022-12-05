@@ -1,8 +1,13 @@
+import "./styles/styles.css"
 <template>
-  <div class="home">
-    <button @click="changeButtonStat()" :disabled="!isActive"> Add Water</button>
-    <h1>Jumlah Air: {{ air }} </h1>
-
+    <button @click="changeButtonStat()" :disabled="!isActive" class="btn"> Add Water</button>
+    <div class="row box">
+      <div class="column"><h1 class="puppy"> PUPPY </h1></div>
+      <div class="column jumlah-air"><h1>Jumlah Air: {{ air }} </h1></div>
+    </div>
+  <div class="welcome-text">
+  <h2 class="welcome-back">Welcome Back,</h2>
+  <h1 class="name">Fadhil</h1>
   </div>
 </template>
 
@@ -49,7 +54,9 @@ export default {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(this.renderer.domElement );
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-      this.controls.update()
+
+      this.controls.update();
+
       this.controls.minDistance = 500;
       this.controls.maxDistance = 1500;
       this.controls.rotateSpeed = 0.25;
@@ -110,7 +117,7 @@ export default {
       this.scene.add(this.skybox);
       
       // Make the water-o-meter
-      const geometry = new Three.SphereGeometry( 25 , 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+      // const geometry = new Three.SphereGeometry( 25 , 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
       const material = new Three.MeshPhysicalMaterial({
         metalness: 0.888,
         roughness: .05,
@@ -126,22 +133,24 @@ export default {
       });
       material.transparent = true;
       material.opacity = 0.3;
-      const sphere1 = new Three.Mesh( geometry, material );
-      const sphere2 = new Three.Mesh( geometry, material );
-      sphere1.translateY(200).translateX( -100 ).translateZ( 100 );
-      sphere2.translateY(-100).translateX( -100 ).translateZ( 100 ).rotateX(Math.PI);
-      this.scene.add( sphere1 );
-      this.scene.add( sphere2 );
+      // const sphere1 = new Three.Mesh( geometry, material );
+      // const sphere2 = new Three.Mesh( geometry, material );
+      // sphere1.translateY(200).translateX( -100 );
+      // sphere2.translateY(-100).translateX( -100 ).rotateX(Math.PI);
+      // this.scene.add( sphere1 );
+      // this.scene.add( sphere2 );
 
-      const cylGeometry1 = new Three.CylinderGeometry(25, 25, 300, 32, 16, true, );
+      // const cylGeometry1 = new Three.CylinderGeometry(25, 25, 200, 32, 16, true, );
+      const cylGeometry1 = new Three.CapsuleGeometry(25, 200, 32, 16 );
       // const cylMaterial1 = new Three.MeshBasicMaterial( { color: 0xff00ff, side: Three.BackSide, wireframe: true } );
       const cylinder1 = new Three.Mesh( cylGeometry1, material );
       cylinder1.translateY( 50 );
       cylinder1.translateX( -100 );
-      cylinder1.translateZ( 100 );
+      // cylinder1.translateZ( 100 );
       this.scene.add( cylinder1 );
-      let height = this.air/8 * 300;
-      const cylGeometry2 = new Three.CylinderGeometry(20, 20, height, 32, 16 );
+      let height = this.air/8 * 200;
+      // const waterGeo = new Three.CylinderGeometry(20, 20, height, 32, 16 );
+      const waterGeo = new Three.CapsuleGeometry(20, height, 32, 16 );
       const cylMaterial2 = new Three.MeshBasicMaterial( { color: 0xa9dcec, 
         transparent: true,
         opacity: 0.7,
@@ -149,29 +158,39 @@ export default {
         refractionRatio: 0.5,
         side: Three.BackSide 
       } );
-      waterometer = new Three.Mesh( cylGeometry2, cylMaterial2 );
-      waterometer.translateY( 0 );
-      waterometer.translateY(-(200 - height)/2);
+      waterometer = new Three.Mesh( waterGeo, cylMaterial2 );
+      waterometer.translateY(-(100 - height)/2);
       waterometer.translateX( -100 );
-      waterometer.translateZ( 100 );
       // waterometer
       this.scene.add( waterometer );
 
       this.drawGround();
       this.drawMountain();
 
-      // const buttonGeometry = new Three.CylinderGeometry(0.1, 0.1, 0.07, 32, 16)
-      // const buttonMaterial1 = new Three.MeshBasicMaterial( { color: 0x00ff00, side: Three.BackSide } );
-      // const button1 = new Three.Mesh( buttonGeometry, buttonMaterial1 );
-      // button1.translateX(-0.4);
-      // button1.rotateX(Math.PI/2);
-      // this.scene.add( button1 );
 
-      // const buttonMaterial2 = new Three.MeshBasicMaterial( { color: 0xff0000, side: Three.BackSide } );
-      // const button2 = new Three.Mesh( buttonGeometry, buttonMaterial2 );
-      // button2.translateX(-0.7);
-      // button2.rotateX(Math.PI/2);
-      // this.scene.add( button2 );
+      // Button
+      var airY, airZ;
+      airY = -100;
+      airZ = 120;
+      var airAtasRad = 92.364
+      var airBawah = new Three.SphereGeometry(50/4 , 32, 16, 0);
+      var airAtas = new Three.ConeGeometry(airAtasRad/8, 111.48/4, 32);
+      const airMat = new Three.MeshBasicMaterial( { color: 0xa9dcec } );
+      const airBawahMesh = new Three.Mesh( airBawah, airMat );
+      const airAtasMesh = new Three.Mesh( airAtas, airMat );
+      airBawahMesh.translateY(airY).translateZ(airZ);
+      airAtasMesh.translateY(airY + 19.129/4 + (111.48/8)).translateZ(airZ);
+
+      this.scene.add( airBawahMesh );
+      this.scene.add( airAtasMesh );
+
+      const buttonGeo = new Three.SphereGeometry( 35 , 32, 16, 0)
+      const buttonMat = material;
+      const button = new Three.Mesh( buttonGeo, buttonMat);
+
+      button.translateY(airY+10).translateZ(airZ);
+
+      this.scene.add( button );
       
       this.animate();
     },
@@ -306,20 +325,21 @@ export default {
     console.log(this.air);
     if(this.air <= 8) {
       waterometer.geometry.dispose();
-      waterometer.geometry = new Three.CylinderGeometry(20, 20, this.air/8 * 299, 32, 16 );
-      waterometer.position.y = (-(200 - this.air/8 * 299)/2);
+      // waterometer.geometry = new Three.CylinderGeometry(20, 20, this.air/8 * 200, 32, 16 );
+      waterometer.geometry = new Three.CapsuleGeometry(20, this.air/8 * 200, 32, 16 );
+      waterometer.position.y = (-(100 - this.air/8 * 200)/2);
     }
 
-    this.isActive = false;
-    var x = setInterval(() => {    
-               this.isActive = false;
-               this.count++;
-               if (this.count == 3) {
-                this.count = 0;
-                this.isActive = true;
-                clearInterval(x);
-               }  
-          }, 1000);        
+    // this.isActive = false;
+    // var x = setInterval(() => {    
+    //            this.isActive = false;
+    //            this.count++;
+    //            if (this.count == 3) {
+    //             this.count = 0;
+    //             this.isActive = true;
+    //             clearInterval(x);
+    //            }  
+    //       }, 1000);        
      },
 },
 }
