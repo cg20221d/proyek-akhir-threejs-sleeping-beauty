@@ -19,6 +19,7 @@ import top from '../assets/Daylight-Box_Top.png'
 
 var waterometer;
 
+
 export default {
   data() {
     return {
@@ -26,6 +27,7 @@ export default {
       air : 0,
       count : 0,
       isActive : true,
+      
     };
   },
   mounted() {
@@ -47,7 +49,7 @@ export default {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(this.renderer.domElement );
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-      this.controls.addEventListener('change',this.renderer);
+      this.controls.update()
       this.controls.minDistance = 500;
       this.controls.maxDistance = 1500;
       this.controls.rotateSpeed = 0.25;
@@ -87,7 +89,7 @@ export default {
         1 // intensity
       )
       const mainLight = new Three.DirectionalLight(0xffffff, 4.0)
-      mainLight.position.set(10, 10, 10)
+      mainLight.position.set(15, 8, 10)
       this.scene.add(ambientLight, mainLight)
 
       loader.load(
@@ -155,6 +157,9 @@ export default {
       // waterometer
       this.scene.add( waterometer );
 
+      this.drawGround();
+      this.drawMountain();
+
       // const buttonGeometry = new Three.CylinderGeometry(0.1, 0.1, 0.07, 32, 16)
       // const buttonMaterial1 = new Three.MeshBasicMaterial( { color: 0x00ff00, side: Three.BackSide } );
       // const button1 = new Three.Mesh( buttonGeometry, buttonMaterial1 );
@@ -170,6 +175,59 @@ export default {
       
       this.animate();
     },
+    drawGround() {
+
+
+      // remap value from the range of [smin,smax] to [emin,emax]
+      const map = (val, smin, smax, emin, emax) => (emax-emin)*(val-smin)/(smax-smin) + emin
+      const jitter = (geo, per) => {
+      var vertices = geo.geometry.attributes.position.array;
+      
+      for (let i = 0; i < vertices.length; i=i+3) {
+        vertices[i] += map(Math.random(),0,1,-per,per)
+        vertices[i+1]+= map(Math.random(),0,1,-per,per)
+        vertices[i+2] += map(Math.random(),0,1,-per,per)    
+      }
+      };
+      //randomly displace the x,y,z coords by the `per` value
+
+      this.ground = new Three.Group();
+      const tanah = new Three.CylinderGeometry( 3.45, 11.42,12.642, 15);
+
+
+     const earthMaterial = new Three.MeshPhongMaterial({ color: 0x9d3f60, flatShading: true });
+      
+      const dasar = new Three.Mesh(tanah, earthMaterial)
+      jitter(dasar, 0.6)
+
+
+
+
+
+      const tanah_atas = new Three.CylinderGeometry(8.43, 11.42, 2.8, 24, 2);
+      const atasMaterial = new Three.MeshPhongMaterial({ color: 0xec74c6, flatShading: true });
+      const atas = new Three.Mesh(tanah_atas, atasMaterial)
+      jitter(atas, 0)
+      atas.scale.set(1.1, 1.2, 1.2)
+      atas.translateY(-5.298)
+
+      const tanah_bawah = new Three.TetrahedronGeometry(1.311, 2);
+      const bawah = new Three.Mesh(tanah_bawah, earthMaterial)
+      jitter(bawah, 0);
+      bawah.scale.set(3.4, 1.3, 3);
+      bawah.translateY(6.4)
+
+      this.ground.add(atas);
+      this.ground.add(dasar);
+      this.ground.add(bawah);
+
+      this.scene.add(this.ground);
+
+      this.ground.scale.set(15,15, 15)
+      this.ground.rotateX(Math.PI)
+      this.ground.translateY(112)
+      this.ground.translateY(7)
+    },
     animate() {
         this.renderer.render(this.scene, this.camera)
         requestAnimationFrame(this.animate);
@@ -178,6 +236,56 @@ export default {
         this.controls.update()
         // console.log( this.mesh.rotation.y += 0.02)
     },
+  drawMountain() {
+      // remap value from the range of [smin,smax] to [emin,emax]
+      const map = (val, smin, smax, emin, emax) => (emax-emin)*(val-smin)/(smax-smin) + emin
+      const jitter = (geo, per) => {
+      var vertices = geo.geometry.attributes.position.array;
+      
+      for (let i = 0; i < vertices.length; i=i+3) {
+        vertices[i] += map(Math.random(),0,1,-per,per)
+        vertices[i+1]+= map(Math.random(),0,1,-per,per)
+        vertices[i+2] += map(Math.random(),0,1,-per,per)    
+      }
+      };
+
+      const chopBottom = (geo, bottom) => {
+      var vertices = geo.geometry.attributes.position.array;
+      
+      for (let i = 0; i < vertices.length; i=i+3) {
+        vertices[i+2] = Math.max(vertices[i+2], bottom)
+      }
+    };
+
+      this.mountains = new Three.Group();
+      const gunung1 = new Three.CylinderGeometry(0.5, 2, 13, 6)
+      const gunungMaterial = new Three.MeshPhongMaterial({ color: 0x232323, flatShading: true });
+      const gunung_satu = new Three.Mesh(gunung1, gunungMaterial);
+
+      const gunung2 = new Three.ConeGeometry(4, 8)
+
+      const gunung_dua = new Three.Mesh(gunung2, gunungMaterial);
+      chopBottom(gunung_dua, 0.5)
+
+     
+      gunung_dua.translateY(-1.6)
+      // gunung_dua.translateZ(3)
+      // gunung_dua.translateX(-10)
+      // gunung_dua.rotateY(Math.PI/4)
+      gunung_dua.rotateY(Math.PI/2)
+      gunung_dua.translateZ(-8)
+      gunung_dua.translateX(-5)
+
+      jitter(gunung_satu, 0.05)
+
+      this.mountains.add(gunung_satu);
+      this.mountains.add(gunung_dua);
+      this.scene.add(this.mountains);
+
+      this.mountains.scale.set(15,15, 15)
+      this.mountains.translateZ(-140)
+      this.mountains.translateY(50)
+  },
   gettingBigger() {
     console.log(this.air)
     if (this.air == 4) {
