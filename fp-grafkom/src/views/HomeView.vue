@@ -405,21 +405,11 @@ gunung_tujuh.translateZ(5)
     console.log(this.air);
     if(this.air <= 8) {
       waterometer.geometry.dispose();
-      // waterometer.geometry = new Three.CylinderGeometry(20, 20, this.air/8 * 200, 32, 16 );
       waterometer.geometry = new Three.CapsuleGeometry(20, this.air/8 * 200, 32, 16 );
       waterometer.position.y = (-(100 - this.air/8 * 200)/2);
     }
 
-    // this.isActive = false;
-    // var x = setInterval(() => {    
-    //            this.isActive = false;
-    //            this.count++;
-    //            if (this.count == 3) {
-    //             this.count = 0;
-    //             this.isActive = true;
-    //             clearInterval(x);
-    //            }  
-    //       }, 1000);        
+   
      },
 },
 }
