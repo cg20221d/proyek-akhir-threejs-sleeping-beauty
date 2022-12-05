@@ -2,12 +2,12 @@ import "./styles/styles.css"
 <template>
     <button @click="changeButtonStat()" :disabled="!isActive" class="btn"> Add Water</button>
     <div class="row box">
-      <div class="column"><h1 class="puppy"> PUPPY </h1></div>
+      <!-- <div class="column"><h1 class="puppy"> PUPPY </h1></div>
       <div class="column jumlah-air"><h1>Jumlah Air: {{ air }} </h1></div>
     </div>
   <div class="welcome-text">
   <h2 class="welcome-back">Welcome Back,</h2>
-  <h1 class="name">Fadhil</h1>
+  <h1 class="name">Fadhil</h1> -->
   </div>
 </template>
 
@@ -96,7 +96,7 @@ export default {
         1 // intensity
       )
       const mainLight = new Three.DirectionalLight(0xffffff, 4.0)
-      mainLight.position.set(15, 8, 10)
+      mainLight.position.set(15, 8, -3)
       this.scene.add(ambientLight, mainLight)
 
       loader.load(
@@ -276,29 +276,109 @@ export default {
       }
     };
 
+    const chopY= (geo, bottom) => {
+      var vertices = geo.geometry.attributes.position.array;
+      
+      for (let i = 0; i < vertices.length; i=i+3) {
+        vertices[i+1] = Math.max(vertices[i+1], bottom)
+      }
+    };
+
+    const chopX= (geo, bottom) => {
+      var vertices = geo.geometry.attributes.position.array;
+      
+      for (let i = 0; i < vertices.length; i=i+3) {
+        vertices[i] = Math.max(vertices[i], bottom)
+      }
+    };
       this.mountains = new Three.Group();
-      const gunung1 = new Three.CylinderGeometry(0.5, 2, 13, 6)
+      const gunung1 = new Three.CylinderGeometry(1.2,3,10,8)
       const gunungMaterial = new Three.MeshPhongMaterial({ color: 0x232323, flatShading: true });
       const gunung_satu = new Three.Mesh(gunung1, gunungMaterial);
+chopY(gunung_satu, 0.5)
+jitter(gunung_satu, 0.08)
+gunung_satu.translateY(-5)
+gunung_satu.translateX(-1)
 
-      const gunung2 = new Three.ConeGeometry(4, 8)
+      const gunung2 = new Three.ConeGeometry(5, 8)
 
       const gunung_dua = new Three.Mesh(gunung2, gunungMaterial);
       chopBottom(gunung_dua, 0.5)
 
-     
-      gunung_dua.translateY(-1.6)
-      // gunung_dua.translateZ(3)
-      // gunung_dua.translateX(-10)
-      // gunung_dua.rotateY(Math.PI/4)
+      gunung_dua.translateY(-0.55)
+      gunung_dua.translateX(-6.1)
+ 
       gunung_dua.rotateY(Math.PI/2)
-      gunung_dua.translateZ(-8)
-      gunung_dua.translateX(-5)
+      // gunung_dua.translateZ()
+      gunung_dua.translateX(-3.35)
 
-      jitter(gunung_satu, 0.05)
+
+      jitter(gunung_dua, 0.8)
+
+
+      const gunung3 = new Three.ConeGeometry(4, 7.5)
+
+      const gunung_tiga = new Three.Mesh(gunung3, gunungMaterial);
+      chopBottom(gunung_tiga, 0.5)
+
+      gunung_tiga.translateY(-0.6)
+      gunung_tiga.translateX(-6.1)
+
+     gunung_tiga.rotateY(Math.PI)
+
+     gunung_tiga.translateZ(-3)
+
+     gunung_tiga.rotateY(-Math.PI/9)
+     jitter(gunung_tiga, 0.8)
+
+     
+     const gunung4 = new Three.CylinderGeometry(2,3.5,8,8)
+
+const gunung_empat = new Three.Mesh(gunung4, gunungMaterial);
+chopY(gunung_empat, 0.5)
+gunung_empat.translateX(-8)
+      gunung_empat.translateZ(4.5)
+gunung_empat.translateY(-4.8)
+jitter(gunung_empat, 0.008)
+
+const gunung5 = new Three.CylinderGeometry(0.5,3.2,14,8)
+      const gunung_lima = new Three.Mesh(gunung5, gunungMaterial);
+chopY(gunung_lima, 0.5)
+jitter(gunung_lima, 0.08)
+gunung_lima.translateX(3)
+gunung_lima.translateY(-5)
+
+
+const gunung6 = new Three.ConeGeometry(4, 7.5)
+
+const gunung_enam = new Three.Mesh(gunung6, gunungMaterial);
+chopBottom(gunung_enam, 0.5)
+chopX(gunung_enam, 0.8)
+gunung_enam.translateY(-1.2)
+gunung_enam.translateX(7)
+gunung_enam.translateZ(5)
+     gunung_enam.rotateY(Math.PI)
+
+
+     const gunung7 = new Three.CylinderGeometry(0.5,3.2,14,8)
+
+     const gunung_tujuh = new Three.Mesh(gunung7, gunungMaterial);
+
+chopBottom(gunung_tujuh, 0.5)
+gunung_tujuh.translateY(-1.2)
+gunung_tujuh.translateX(7)
+gunung_tujuh.translateZ(5)
+     gunung_tujuh.rotateY(Math.PI)
+
+
 
       this.mountains.add(gunung_satu);
       this.mountains.add(gunung_dua);
+      this.mountains.add(gunung_tiga);
+      this.mountains.add(gunung_empat);
+      this.mountains.add(gunung_lima);
+      this.mountains.add(gunung_enam);
+      this.mountains.add(gunung_tujuh);
       this.scene.add(this.mountains);
 
       this.mountains.scale.set(15,15, 15)
