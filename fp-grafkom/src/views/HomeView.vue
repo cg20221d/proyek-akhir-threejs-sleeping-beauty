@@ -35,6 +35,8 @@ export default {
       isActive : true,
       pointer : null,
       raycaster : null,
+      mixer : 0,
+      clock : new Three.Clock(),
     };
   },
   mounted() {
@@ -110,6 +112,13 @@ export default {
           doggo.rotateY(-600)
           this.scene.add(doggo)
           doggo.position.y = -17;
+
+          this.mixer = new Three.AnimationMixer(doggo);
+
+          const clips = gltf.animations;
+          const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+          const action = this.mixer.clipAction(clip); 
+          action.play();
         },
         undefined,
         undefined
@@ -278,6 +287,8 @@ export default {
     },
     animate() {
         Tween.update();
+        if(this.mixer)
+        this.mixer.update(this.clock.getDelta());
         this.renderer.render(this.scene, this.camera)
         requestAnimationFrame(this.animate);
         // this.skybox.rotation.x = this.skybox.rotation.x + 0.01;
