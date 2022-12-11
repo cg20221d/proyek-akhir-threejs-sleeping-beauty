@@ -447,8 +447,7 @@ gunung_sepuluh.translateZ(7.5)
       this.mountains.translateZ(-140)
       this.mountains.translateY(50)
   },
-  gettingBigger() {
-    console.log(this.level)
+  level2() {
     this.scene.remove( doggo );
     const loader = new GLTFLoader()
     loader.load(
@@ -460,23 +459,89 @@ gunung_sepuluh.translateZ(7.5)
           doggo.rotateY(-600)
           this.scene.add(doggo)
           doggo.position.y = -17;
-          this.level = 1;
+          this.mixer = new Three.AnimationMixer(doggo);
+
+        const clips = gltf.animations;
+        const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction.001');
+        const action = this.mixer.clipAction(clip); 
+        action.play();
         },
         undefined,
         undefined
       )
-    // if (this.air == 4) {
-    //   this.renderer.clear();
-    //   this.scene.remove(this.mesh);
-    //   let geometry = new Three.CircleGeometry( 1, 8, 0, 6.283185307179586 );
-    //   let material = new Three.MeshBasicMaterial( { color: 0xffff00 } );
+      this.air = 0;
+  },
+  level3() {
+    this.scene.remove( doggo );
+    const loader = new GLTFLoader()
+    loader.load(
+        '/three-assets/dog3.gltf',
+        gltf => {
+          doggo = gltf.scene;
+          doggo.scale.set(50, 50, 50);
+          // doggo.rotateY(-Math.PI/7)
+          doggo.rotateY(-600)
+          this.scene.add(doggo)
+          doggo.position.y = -17;
+          this.mixer = new Three.AnimationMixer(doggo);
 
-    //   this.mesh = new Three.Mesh(geometry, material);
-    //   this.scene.add(this.mesh);
+        const clips = gltf.animations;
+        const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction.001');
+        const action = this.mixer.clipAction(clip); 
+        action.play();
+        },
+        undefined,
+        undefined
+      )
+      this.air = 0;
+  },
+  level4() {
+    this.scene.remove( doggo );
+    const loader = new GLTFLoader()
+    loader.load(
+        '/three-assets/dog4.gltf',
+        gltf => {
+          doggo = gltf.scene;
+          doggo.scale.set(40, 40, 40);
+          // doggo.rotateY(-Math.PI/7)
+          // doggo.rotateY(-600)
+          this.scene.add(doggo)
+          doggo.position.y = -17;
+          this.mixer = new Three.AnimationMixer(doggo);
 
-    //   this.animate();
+        const clips = gltf.animations;
+        const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+        const action = this.mixer.clipAction(clip); 
+        action.play();
+        },
+        undefined,
+        undefined
+      )
+      this.air = 0;
+  },
+  level5() {
+    this.scene.remove( doggo );
+    const loader = new GLTFLoader()
+    loader.load(
+        '/three-assets/dog5.gltf',
+        gltf => {
+          doggo = gltf.scene;
+          doggo.scale.set(50, 50, 50);
+          // doggo.rotateY(-Math.PI/7)
+          doggo.rotateY(-600)
+          this.scene.add(doggo)
+          doggo.position.y = -17;
+          this.mixer = new Three.AnimationMixer(doggo);
 
-   // }
+        const clips = gltf.animations;
+        const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+        const action = this.mixer.clipAction(clip); 
+        action.play();
+        },
+        undefined,
+        undefined
+      )
+      this.air = 0;
   },
   changeButtonStat() {
     this.air += 1;
@@ -499,15 +564,27 @@ gunung_sepuluh.translateZ(7.5)
 
         tween.start();
       }
+    
     }
-    if (this.air == 8) {
+    if (this.air == 9) {
       this.level +=1;
+
+      if( this.level == 2) {
+        this.level2();
+      }
+      if(this.level == 3) {
+        this.level3();
+      }
+      if(this.level == 4) {
+        this.level4();
+      }
+      if(this.level == 5) {
+        this.level5();
+      }
     }
 
-    if (this.level == 2) {
-        this.gettingBigger()
-    }
-    
+
+
 
    
      },
