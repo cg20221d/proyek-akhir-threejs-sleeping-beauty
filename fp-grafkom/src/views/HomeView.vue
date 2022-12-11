@@ -21,6 +21,20 @@ import front from '../assets/Daylight-Box_Front.png'
 import left from '../assets/Daylight-Box_Left.png'
 import right from '../assets/Daylight-Box_Right.png'
 import top from '../assets/Daylight-Box_Top.png'
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC0APgcvMKt4XU3jRB0fO9HAX3_doI3m48",
+  authDomain: "minumbre-4fb57.firebaseapp.com",
+  projectId: "minumbre-4fb57",
+  storageBucket: "minumbre-4fb57.appspot.com",
+  messagingSenderId: "74620809112",
+  appId: "1:74620809112:web:a35484864d4da508f985ed"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 var waterometer;
 
@@ -33,9 +47,12 @@ export default {
       isActive : true,
       pointer : null,
       raycaster : null,
+      user: [],
+      username : "CNzGlvwWnNfZxzQW1Cz0",
     };
   },
   mounted() {
+    this.load();
     this.init();
     this.animate();
   },
@@ -43,6 +60,20 @@ export default {
     this.gettingBigger();
   },
   methods: {
+    async load() {
+      try {
+      //   const querySnapshot = await getDocs(collection(db, "TestCollection"));
+        const querySnapshot = await getDocs(collection(db, "TestCollection", this.username, "animals"));
+        querySnapshot.forEach((doc) => {
+          console.log(doc.data());
+          this.user.push(doc.data());
+        })
+        console.log(this.user);
+      }
+      catch {
+        console.log("error");
+      }
+    },
     init() {
       this.scene = new Three.Scene();
 
