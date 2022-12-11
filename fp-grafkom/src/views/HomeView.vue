@@ -104,7 +104,7 @@ export default {
       loader.load(
         '/three-assets/dog1.gltf',
         gltf => {
-          var doggo = gltf.scene;
+          doggo = gltf.scene;
           doggo.scale.set(120, 120, 120);
           // doggo.rotateY(-Math.PI/7)
           doggo.rotateY(-600)
@@ -274,7 +274,7 @@ export default {
       // this.ground.translateY(7)
       this.ground.translateZ(80)
 
-      var date1_tomorrow = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate() + 1);
+      // var date1_tomorrow = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate() + 1);
     },
     animate() {
         Tween.update();
@@ -459,7 +459,9 @@ gunung_sepuluh.translateZ(7.5)
       waterometer.geometry = new Three.CapsuleGeometry(20, this.air/8 * 200, 32, 16 );
       waterometer.position.y = (-(100 - this.air/8 * 200)/2);
 
+      console.log(this.air)
       if (this.air == 4) {
+
         var tween = new Tween.Tween(doggo.scale).to({
           x: 150,
           y: 150,
