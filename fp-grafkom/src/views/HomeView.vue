@@ -455,7 +455,7 @@ gunung_sepuluh.translateZ(7.5)
         '/three-assets/dog2.gltf',
         gltf => {
           doggo = gltf.scene;
-          doggo.scale.set(60, 60, 60);
+          doggo.scale.set(65, 65, 65);
           // doggo.rotateY(-Math.PI/7)
           doggo.rotateY(-600)
           this.scene.add(doggo)
