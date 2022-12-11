@@ -35,15 +35,14 @@ export default {
       isActive : true,
       pointer : null,
       raycaster : null,
+      level : 0,
     };
   },
   mounted() {
     this.init();
     this.animate();
   },
-  updated() {
-    this.gettingBigger();
-  },
+
   methods: {
     init() {
       this.scene = new Three.Scene();
@@ -100,7 +99,6 @@ export default {
       const mainLight = new Three.DirectionalLight(0xffffff, 4.0)
       mainLight.position.set(15, 8, -3)
       this.scene.add(ambientLight, mainLight)
-
       loader.load(
         '/three-assets/dog1.gltf',
         gltf => {
@@ -110,10 +108,12 @@ export default {
           doggo.rotateY(-600)
           this.scene.add(doggo)
           doggo.position.y = -17;
+          this.level = 1;
         },
         undefined,
         undefined
       )
+
 
       let skyboxGeo = new Three.BoxGeometry(10000,10000,10000);
       this.skybox = new Three.Mesh(skyboxGeo, materialArray);
@@ -207,7 +207,6 @@ export default {
         // console.log(intersects.length);
         for(let i = 0; i < intersects.length; i++) {
           if(intersects[i].object.name == "button"){
-            console.log("Pressed the button");
             this.changeButtonStat();
             
           }
@@ -215,6 +214,7 @@ export default {
       };
 
       window.addEventListener("mousedown", onMouseDown);
+
 
 
 
@@ -274,7 +274,7 @@ export default {
       // this.ground.translateY(7)
       this.ground.translateZ(80)
 
-      // var date1_tomorrow = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate() + 1);
+
     },
     animate() {
         Tween.update();
@@ -437,29 +437,45 @@ gunung_sepuluh.translateZ(7.5)
       this.mountains.translateY(50)
   },
   gettingBigger() {
-    console.log(this.air)
-    if (this.air == 4) {
-      this.renderer.clear();
-      this.scene.remove(this.mesh);
-      let geometry = new Three.CircleGeometry( 1, 8, 0, 6.283185307179586 );
-      let material = new Three.MeshBasicMaterial( { color: 0xffff00 } );
+    console.log(this.level)
+    this.scene.remove( doggo );
+    const loader = new GLTFLoader()
+    loader.load(
+        '/three-assets/dog2.gltf',
+        gltf => {
+          doggo = gltf.scene;
+          doggo.scale.set(60, 60, 60);
+          // doggo.rotateY(-Math.PI/7)
+          doggo.rotateY(-600)
+          this.scene.add(doggo)
+          doggo.position.y = -17;
+          this.level = 1;
+        },
+        undefined,
+        undefined
+      )
+    // if (this.air == 4) {
+    //   this.renderer.clear();
+    //   this.scene.remove(this.mesh);
+    //   let geometry = new Three.CircleGeometry( 1, 8, 0, 6.283185307179586 );
+    //   let material = new Three.MeshBasicMaterial( { color: 0xffff00 } );
 
-      this.mesh = new Three.Mesh(geometry, material);
-      this.scene.add(this.mesh);
+    //   this.mesh = new Three.Mesh(geometry, material);
+    //   this.scene.add(this.mesh);
 
-      this.animate();
+    //   this.animate();
 
-    }
+   // }
   },
   changeButtonStat() {
     this.air += 1;
     console.log(this.air);
+    console.log("this.level =" + this.level)
     if(this.air <= 8) {
       waterometer.geometry.dispose();
       waterometer.geometry = new Three.CapsuleGeometry(20, this.air/8 * 200, 32, 16 );
       waterometer.position.y = (-(100 - this.air/8 * 200)/2);
 
-      console.log(this.air)
       if (this.air == 4) {
 
         var tween = new Tween.Tween(doggo.scale).to({
@@ -473,6 +489,14 @@ gunung_sepuluh.translateZ(7.5)
         tween.start();
       }
     }
+    if (this.air == 8) {
+      this.level +=1;
+    }
+
+    if (this.level == 2) {
+        this.gettingBigger()
+    }
+    
 
    
      },
