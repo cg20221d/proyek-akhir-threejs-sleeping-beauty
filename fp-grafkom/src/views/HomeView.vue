@@ -25,6 +25,7 @@ import top from '../assets/Daylight-Box_Top.png'
 
 var waterometer;
 var doggo;
+var sphere;
 
 export default {
   data() {
@@ -178,6 +179,15 @@ export default {
 
       this.drawGround();
       this.drawMountain();
+
+      //sphere
+      const geometry = new Three.SphereGeometry( 45, 62, 46 );
+      const material_sphr = new Three.MeshBasicMaterial( { color: 0xffff00 } );
+      sphere = new Three.Mesh( geometry, material_sphr );
+      sphere.translateX( 150 )
+      sphere.translateY( 250 );
+      
+      this.scene.add( sphere );
 
 
       // Button
