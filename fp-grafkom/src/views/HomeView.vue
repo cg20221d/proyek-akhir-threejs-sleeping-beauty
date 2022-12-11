@@ -1,6 +1,6 @@
 import "./styles/styles.css"
 <template>
-    <button @click="changeButtonStat()" :disabled="!isActive" class="btn"> Add Water</button>
+    <!-- <button @click="changeButtonStat()" :disabled="!isActive" class="btn"> Add Water</button> -->
     <div class="row box">
       <!-- <div class="column"><h1 class="puppy"> PUPPY </h1></div>
       <div class="column jumlah-air"><h1>Jumlah Air: {{ air }} </h1></div>
@@ -24,7 +24,6 @@ import top from '../assets/Daylight-Box_Top.png'
 
 var waterometer;
 
-
 export default {
   data() {
     return {
@@ -32,7 +31,8 @@ export default {
       air : 0,
       count : 0,
       isActive : true,
-      
+      pointer : null,
+      raycaster : null,
     };
   },
   mounted() {
@@ -115,6 +115,7 @@ export default {
 
       let skyboxGeo = new Three.BoxGeometry(10000,10000,10000);
       this.skybox = new Three.Mesh(skyboxGeo, materialArray);
+      this.skybox.name = "Skybox";
       this.scene.add(this.skybox);
       
       // Make the water-o-meter
@@ -128,7 +129,6 @@ export default {
         // transmission: .95,
         opacity: .5,
         reflectivity: 0.2,
-        refractionRatio: 0.985,
         ior: 0.9,
         side: Three.BackSide,
       });
@@ -188,11 +188,32 @@ export default {
       const buttonGeo = new Three.SphereGeometry( 35 , 32, 16, 0)
       const buttonMat = material;
       const button = new Three.Mesh( buttonGeo, buttonMat);
-
+      button.name = "button";
       button.translateY(airY+10).translateZ(airZ);
-
+      
       this.scene.add( button );
       
+            // For mouse interaction
+            this.pointer = new Three.Vector2();
+      this.raycaster = new Three.Raycaster();
+
+      const onMouseDown = (event) => {
+        this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        this.raycaster.setFromCamera(this.pointer, this.camera);
+        const intersects = this.raycaster.intersectObjects(this.scene.children);
+        // console.log(intersects.length);
+        for(let i = 0; i < intersects.length; i++) {
+          if(intersects[i].object.name == "button"){
+            console.log("Pressed the button");
+            this.changeButtonStat();
+            
+          }
+        }
+      };
+
+      window.addEventListener("mousedown", onMouseDown);
+
       this.animate();
     },
     drawGround() {
