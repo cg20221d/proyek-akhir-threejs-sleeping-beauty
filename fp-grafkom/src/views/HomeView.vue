@@ -13,6 +13,7 @@ import "./styles/styles.css"
 
 <script type="module">
 import * as Three from 'three'
+import * as Tween from '@tweenjs/tween.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader'
 import back from '../assets/Daylight-Box_Back.png'
@@ -23,6 +24,7 @@ import right from '../assets/Daylight-Box_Right.png'
 import top from '../assets/Daylight-Box_Top.png'
 
 var waterometer;
+var doggo;
 
 export default {
   data() {
@@ -188,22 +190,7 @@ export default {
       const buttonGeo = new Three.SphereGeometry( 35 , 32, 16, 0)
       const buttonMat = material;
       const button = new Three.Mesh( buttonGeo, buttonMat);
-<<<<<<< HEAD
       button.name = "button";
-=======
-    //   button.on('click', function()
-    //   {
-    //     this.air += 1;
-    // console.log(this.air);
-    // if(this.air <= 8) {
-    //   waterometer.geometry.dispose();
-    //   // waterometer.geometry = new Three.CylinderGeometry(20, 20, this.air/8 * 200, 32, 16 );
-    //   waterometer.geometry = new Three.CapsuleGeometry(20, this.air/8 * 200, 32, 16 );
-    //   waterometer.position.y = (-(100 - this.air/8 * 200)/2);
-    // }
-    //   });
-
->>>>>>> b32f3d2 (Fixing things)
       button.translateY(airY+10).translateZ(airZ);
       
       this.scene.add( button );
@@ -228,6 +215,8 @@ export default {
       };
 
       window.addEventListener("mousedown", onMouseDown);
+
+
 
       this.animate();
     },
@@ -284,8 +273,11 @@ export default {
       this.ground.translateY(117)
       // this.ground.translateY(7)
       this.ground.translateZ(80)
+
+      var date1_tomorrow = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate() + 1);
     },
     animate() {
+        Tween.update();
         this.renderer.render(this.scene, this.camera)
         requestAnimationFrame(this.animate);
         // this.skybox.rotation.x = this.skybox.rotation.x + 0.01;
@@ -467,6 +459,18 @@ gunung_sepuluh.translateZ(7.5)
       // waterometer.geometry = new Three.CylinderGeometry(20, 20, this.air/8 * 200, 32, 16 );
       waterometer.geometry = new Three.CapsuleGeometry(20, this.air/8 * 200, 32, 16 );
       waterometer.position.y = (-(100 - this.air/8 * 200)/2);
+
+      if (this.air == 4) {
+        var tween = new Tween.Tween(doggo.scale).to({
+          x: 150,
+          y: 150,
+          z: 150,
+        }, 1500)
+        .easing(Tween.Easing.Elastic.Out)
+        .delay(100);
+
+        tween.start();
+      }
     }
 
     // this.isActive = false;
