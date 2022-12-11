@@ -2,13 +2,13 @@ import "./styles/styles.css"
 <template>
     <!-- <button @click="changeButtonStat()" :disabled="!isActive" class="btn"> Add Water</button> -->
     <div class="row box">
-      <!-- <div class="column"><h1 class="puppy"> PUPPY </h1></div>
-      <div class="column jumlah-air"><h1>Jumlah Air: {{ air }} </h1></div>
+       <!-- <div class="column"><h1 class="puppy"> PUPPY </h1></div>
+      <div class="column jumlah-air"><h1>Jumlah Air: {{ air }} </h1></div> -->
     </div>
-  <div class="welcome-text">
+ <!-- <div class="welcome-text">
   <h2 class="welcome-back">Welcome Back,</h2>
-  <h1 class="name">Fadhil</h1> -->
-  </div>
+  <h1 class="name">Fadhil</h1> 
+  </div> -->
 </template>
 
 <script type="module">
@@ -103,7 +103,7 @@ export default {
         '/three-assets/dog1.gltf',
         gltf => {
           var doggo = gltf.scene;
-          doggo.scale.set(200, 200, 200);
+          doggo.scale.set(120, 120, 120);
           // doggo.rotateY(-Math.PI/7)
           doggo.rotateY(-600)
           this.scene.add(doggo)
@@ -188,7 +188,22 @@ export default {
       const buttonGeo = new Three.SphereGeometry( 35 , 32, 16, 0)
       const buttonMat = material;
       const button = new Three.Mesh( buttonGeo, buttonMat);
+<<<<<<< HEAD
       button.name = "button";
+=======
+    //   button.on('click', function()
+    //   {
+    //     this.air += 1;
+    // console.log(this.air);
+    // if(this.air <= 8) {
+    //   waterometer.geometry.dispose();
+    //   // waterometer.geometry = new Three.CylinderGeometry(20, 20, this.air/8 * 200, 32, 16 );
+    //   waterometer.geometry = new Three.CapsuleGeometry(20, this.air/8 * 200, 32, 16 );
+    //   waterometer.position.y = (-(100 - this.air/8 * 200)/2);
+    // }
+    //   });
+
+>>>>>>> b32f3d2 (Fixing things)
       button.translateY(airY+10).translateZ(airZ);
       
       this.scene.add( button );
@@ -280,16 +295,7 @@ export default {
     },
   drawMountain() {
       // remap value from the range of [smin,smax] to [emin,emax]
-      const map = (val, smin, smax, emin, emax) => (emax-emin)*(val-smin)/(smax-smin) + emin
-      const jitter = (geo, per) => {
-      var vertices = geo.geometry.attributes.position.array;
-      
-      for (let i = 0; i < vertices.length; i=i+3) {
-        vertices[i] += map(Math.random(),0,1,-per,per)
-        vertices[i+1]+= map(Math.random(),0,1,-per,per)
-        vertices[i+2] += map(Math.random(),0,1,-per,per)    
-      }
-      };
+
 
       const chopBottom = (geo, bottom) => {
       var vertices = geo.geometry.attributes.position.array;
@@ -319,7 +325,6 @@ export default {
       const gunungMaterial = new Three.MeshPhongMaterial({ color: 0x232323, flatShading: true });
       const gunung_satu = new Three.Mesh(gunung1, gunungMaterial);
 chopY(gunung_satu, 0.5)
-jitter(gunung_satu, 0.08)
 gunung_satu.translateY(-5)
 gunung_satu.translateX(-1)
 
@@ -336,7 +341,7 @@ gunung_satu.translateX(-1)
       gunung_dua.translateX(-3.35)
 
 
-      jitter(gunung_dua, 0.8)
+      // jitter(gunung_dua, 0.8)
 
 
       const gunung3 = new Three.ConeGeometry(4, 7.5)
@@ -352,7 +357,7 @@ gunung_satu.translateX(-1)
      gunung_tiga.translateZ(-3)
 
      gunung_tiga.rotateY(-Math.PI/9)
-     jitter(gunung_tiga, 0.8)
+    //  jitter(gunung_tiga, 0.8)
 
      
      const gunung4 = new Three.CylinderGeometry(2,3.5,8,8)
@@ -362,12 +367,12 @@ chopY(gunung_empat, 0.5)
 gunung_empat.translateX(-8)
       gunung_empat.translateZ(4.5)
 gunung_empat.translateY(-4.8)
-jitter(gunung_empat, 0.008)
+// jitter(gunung_empat, 0.008)
 
 const gunung5 = new Three.CylinderGeometry(0.5,3.2,14,8)
       const gunung_lima = new Three.Mesh(gunung5, gunungMaterial);
 chopY(gunung_lima, 0.5)
-jitter(gunung_lima, 0.08)
+// jitter(gunung_lima, 0.08)
 gunung_lima.translateX(3)
 gunung_lima.translateY(-5)
 
@@ -383,15 +388,42 @@ gunung_enam.translateZ(5)
      gunung_enam.rotateY(Math.PI)
 
 
-     const gunung7 = new Three.CylinderGeometry(0.5,3.2,14,8)
+     const gunung7 = new Three.CylinderGeometry(0.5,2.8,18,8)
 
      const gunung_tujuh = new Three.Mesh(gunung7, gunungMaterial);
 
-chopBottom(gunung_tujuh, 0.5)
-gunung_tujuh.translateY(-1.2)
+chopBottom(gunung_tujuh, 0.2)
+chopY(gunung_tujuh, 0.5)
+gunung_tujuh.translateY(-5)
 gunung_tujuh.translateX(7)
-gunung_tujuh.translateZ(5)
+gunung_tujuh.translateZ(4)
      gunung_tujuh.rotateY(Math.PI)
+
+     const gunung8 = new Three.CylinderGeometry(0.5,2.8,16,8)
+
+const gunung_delapan = new Three.Mesh(gunung8, gunungMaterial);
+
+chopBottom(gunung_delapan, 0.5)
+chopY(gunung_delapan, 0.5)
+gunung_delapan.translateY(-5)
+gunung_delapan.translateX(7.5)
+gunung_delapan.translateZ(4)
+ gunung_delapan.rotateY(Math.PI/2)
+
+ const gunung9 = new Three.ConeGeometry(3, 5)
+
+const gunung_sembilan = new Three.Mesh(gunung9, gunungMaterial);
+gunung_sembilan.translateY(-2.5)
+gunung_sembilan.translateX(6.5)
+gunung_sembilan.translateZ(5.6)
+
+const gunung10 = new Three.CylinderGeometry(0.87, 3.09, 2.401, 8, 1)
+
+const gunung_sepuluh = new Three.Mesh(gunung10, gunungMaterial);
+gunung_sepuluh.translateY(-3.5)
+gunung_sepuluh.translateX(6)
+gunung_sepuluh.translateZ(7.5)
+
 
 
 
@@ -400,8 +432,12 @@ gunung_tujuh.translateZ(5)
       this.mountains.add(gunung_tiga);
       this.mountains.add(gunung_empat);
       this.mountains.add(gunung_lima);
-      this.mountains.add(gunung_enam);
       this.mountains.add(gunung_tujuh);
+      this.mountains.add(gunung_enam);
+      this.mountains.add(gunung_delapan);
+      this.mountains.add(gunung_sepuluh);
+      this.mountains.add(gunung_sembilan);
+
       this.scene.add(this.mountains);
 
       this.mountains.scale.set(15,15, 15)
