@@ -240,7 +240,12 @@ export default {
       this.animate();
     },
     drawGround() {
+      const rockTexture = new Three.TextureLoader().load('mountain.jpeg')
+      const groundTexture = new Three.TextureLoader().load('ground.jpeg')
 
+    rockTexture.wrapS = Three.RepeatWrapping;
+    rockTexture.wrapT = Three.RepeatWrapping;
+    rockTexture.repeat.set(2, 2);
 
       // remap value from the range of [smin,smax] to [emin,emax]
       const map = (val, smin, smax, emin, emax) => (emax-emin)*(val-smin)/(smax-smin) + emin
@@ -259,7 +264,7 @@ export default {
       const tanah = new Three.CylinderGeometry( 3.45, 11.42,12.642, 15);
 
 
-     const earthMaterial = new Three.MeshPhongMaterial({ color: 0x9d3f60, flatShading: true });
+     const earthMaterial = new Three.MeshPhongMaterial({ color: 0x9d3f60, flatShading: true , map : rockTexture});
       
       const dasar = new Three.Mesh(tanah, earthMaterial)
       jitter(dasar, 0.6)
@@ -269,7 +274,7 @@ export default {
 
 
       const tanah_atas = new Three.CylinderGeometry(8.43, 11.42, 2.8, 24, 2);
-      const atasMaterial = new Three.MeshPhongMaterial({ color: 0xec74c6, flatShading: true });
+      const atasMaterial = new Three.MeshPhongMaterial({ color: 0xec74c6, flatShading: true, map : groundTexture });
       const atas = new Three.Mesh(tanah_atas, atasMaterial)
       jitter(atas, 0)
       atas.scale.set(1.1, 1.2, 1.2)
@@ -307,6 +312,10 @@ export default {
         // console.log( this.mesh.rotation.y += 0.02)
     },
   drawMountain() {
+    const rockTexture = new Three.TextureLoader().load('mountain.jpeg')
+    rockTexture.wrapS = Three.RepeatWrapping;
+    rockTexture.wrapT = Three.RepeatWrapping;
+    rockTexture.repeat.set(2, 2);
       // remap value from the range of [smin,smax] to [emin,emax]
 
 
@@ -335,7 +344,7 @@ export default {
     };
       this.mountains = new Three.Group();
       const gunung1 = new Three.CylinderGeometry(1.2,3,10,8)
-      const gunungMaterial = new Three.MeshPhongMaterial({ color: 0x232323, flatShading: true });
+      const gunungMaterial = new Three.MeshPhongMaterial({ color: 0x232323, flatShading: true, map : rockTexture });
       const gunung_satu = new Three.Mesh(gunung1, gunungMaterial);
 chopY(gunung_satu, 0.5)
 gunung_satu.translateY(-5)
@@ -458,6 +467,7 @@ gunung_sepuluh.translateZ(7.5)
       this.mountains.translateY(50)
   },
   level2() {
+    this.air = 0;
     this.scene.remove( doggo );
     const loader = new GLTFLoader()
     loader.load(
@@ -479,9 +489,9 @@ gunung_sepuluh.translateZ(7.5)
         undefined,
         undefined
       )
-      this.air = 0;
   },
   level3() {
+    this.air = 0;
     this.scene.remove( doggo );
     const loader = new GLTFLoader()
     loader.load(
@@ -503,9 +513,10 @@ gunung_sepuluh.translateZ(7.5)
         undefined,
         undefined
       )
-      this.air = 0;
+
   },
   level4() {
+    this.air = 0;
     this.scene.remove( doggo );
     const loader = new GLTFLoader()
     loader.load(
@@ -527,9 +538,10 @@ gunung_sepuluh.translateZ(7.5)
         undefined,
         undefined
       )
-      this.air = 0;
+
   },
   level5() {
+    this.air = 0;
     this.scene.remove( doggo );
     const loader = new GLTFLoader()
     loader.load(
@@ -551,7 +563,7 @@ gunung_sepuluh.translateZ(7.5)
         undefined,
         undefined
       )
-      this.air = 0;
+
   },
   changeButtonStat() {
     this.air += 1;
@@ -562,9 +574,9 @@ gunung_sepuluh.translateZ(7.5)
       waterometer.geometry = new Three.CapsuleGeometry(20, this.air/8 * 200, 32, 16 );
       waterometer.position.y = (-(100 - this.air/8 * 200)/2);
 
-      if (this.air == 4) {
+      if (this.air == 4 && this.level == 1) {
 
-        var tween = new Tween.Tween(doggo.scale).to({
+        var tween1 = new Tween.Tween(doggo.scale).to({
           x: 150,
           y: 150,
           z: 150,
@@ -572,8 +584,48 @@ gunung_sepuluh.translateZ(7.5)
         .easing(Tween.Easing.Elastic.Out)
         .delay(100);
 
-        tween.start();
+        tween1.start();
       }
+
+      if (this.air == 4 && this.level == 2) {
+
+        var tween2 = new Tween.Tween(doggo.scale).to({
+          x: 85,
+          y: 85,
+          z: 85,
+        }, 1500)
+        .easing(Tween.Easing.Elastic.Out)
+        .delay(100);
+
+        tween2.start();
+        }
+
+        if (this.air == 4 && this.level == 3) {
+
+        var tween3 = new Tween.Tween(doggo.scale).to({
+          x: 70,
+          y: 70,
+          z: 70,
+        }, 1500)
+        .easing(Tween.Easing.Elastic.Out)
+        .delay(100);
+
+        tween3.start();
+        }
+
+        if (this.air == 4 && (this.level == 4 || this.level == 5)) {
+
+        var tween4 = new Tween.Tween(doggo.scale).to({
+          x: 65,
+          y: 65,
+          z: 65,
+        }, 1500)
+        .easing(Tween.Easing.Elastic.Out)
+        .delay(100);
+
+        tween4.start();
+        }
+
     
     }
     if (this.air == 9) {
