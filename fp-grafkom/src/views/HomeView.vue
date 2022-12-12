@@ -23,6 +23,29 @@ import left from '../assets/Daylight-Box_Left.png'
 import right from '../assets/Daylight-Box_Right.png'
 import top from '../assets/Daylight-Box_Top.png'
 
+let simpleNoise = `
+    float N (vec2 st) { // https://thebookofshaders.com/10/
+        return fract( sin( dot( st.xy, vec2(12.9898,78.233 ) ) ) *  43758.5453123);
+    }
+    
+    float smoothNoise( vec2 ip ){ // https://www.youtube.com/watch?v=zXsWftRdsvU
+    	vec2 lv = fract( ip );
+      vec2 id = floor( ip );
+      
+      lv = lv * lv * ( 3. - 2. * lv );
+      
+      float bl = N( id );
+      float br = N( id + vec2( 1, 0 ));
+      float b = mix( bl, br, lv.x );
+      
+      float tl = N( id + vec2( 0, 1 ));
+      float tr = N( id + vec2( 1, 1 ));
+      float t = mix( tl, tr, lv.x );
+      
+      return mix( b, t, lv.y );
+    }
+  `;
+
 var waterometer;
 var doggo;
 var sphere;
@@ -179,6 +202,131 @@ export default {
 
       this.drawGround();
       this.drawMountain();
+
+      // rumput
+      const WIDTH = window.innerWidth;
+      const HEIGHT = window.innerHeight;
+
+      const scene = new Three.Scene();
+      const camera = new Three.PerspectiveCamera(55, WIDTH / HEIGHT, 45, 30000);
+      camera.position.set(100, 100, 100);
+
+      const renderer = new Three.WebGLRenderer({ antialias: true });
+      //renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      //const controls = new Three.OrbitControls(camera, renderer.domElement);
+
+      const clock = new Three.Clock();
+
+      ////////////
+      // MATERIAL
+      ////////////
+
+      const vertexShader = `
+  varying vec2 vUv;
+  uniform float time;
+  
+  ${simpleNoise}
+  
+	void main() {
+
+    vUv = uv;
+    float t = time * 2.;
+    
+    // VERTEX POSITION
+    
+    vec4 mvPosition = vec4( position, 1.0 );
+    #ifdef USE_INSTANCING
+    	mvPosition = instanceMatrix * mvPosition;
+    #endif
+    
+    // DISPLACEMENT
+    
+    float noise = smoothNoise(mvPosition.xz * 0.5 + vec2(0., t));
+    noise = pow(noise * 0.5 + 0.5, 2.) * 2.;
+    
+    // here the displacement is made stronger on the blades tips.
+    float dispPower = 1. - cos( uv.y * 3.1416 * 0.5 );
+    
+    float displacement = noise * ( 0.3 * dispPower );
+    mvPosition.z -= displacement;
+    
+    //
+    
+    vec4 modelViewPosition = modelViewMatrix * mvPosition;
+    gl_Position = projectionMatrix * modelViewPosition;
+
+	}
+`;
+
+      const fragmentShader = `
+  varying vec2 vUv;
+  
+  void main() {
+  	vec3 baseColor = vec3( 0.41, 1.0, 0.5 );
+    float clarity = ( vUv.y * 0.875 ) + 0.125;
+    gl_FragColor = vec4( baseColor * clarity, 1 );
+  }
+`;
+
+      const uniforms = {
+        time: {
+          value: 0
+        }
+      }
+
+      const leavesMaterial = new Three.ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms,
+        side: Three.DoubleSide
+      });
+
+      /////////
+      // MESH
+      /////////
+
+      const instanceNumber = 200000;
+      const dummy = new Three.Object3D();
+
+      const Geometry = new Three.PlaneGeometry(0.1, 1, 1, 4);
+      Geometry.translate(0, 0.5, 0); // move grass blade geometry lowest point at 0.
+
+      const instancedMesh = new Three.InstancedMesh(Geometry, leavesMaterial, instanceNumber);
+
+
+      // Position and scale the grass blade instances randomly.
+
+      for (let i = 0; i < instanceNumber; i++) {
+
+        dummy.position.set(
+          (Math.random() - 0.5) * 400,
+          -15,
+          (Math.random() - 0.3) * -450
+        );
+
+        dummy.scale.setScalar(0.5 + Math.random() * 10);
+
+        dummy.rotation.y = Math.random() * Math.PI;
+
+        dummy.updateMatrix();
+        instancedMesh.setMatrixAt(i, dummy.matrix);
+
+      }
+      const animateGrass = function () {
+
+        // Hand a time variable to vertex shader for wind displacement.
+        leavesMaterial.uniforms.time.value = clock.getElapsedTime();
+        leavesMaterial.uniformsNeedUpdate = true;
+
+        requestAnimationFrame(animateGrass);
+
+        renderer.render(scene, camera);
+      };
+
+      animateGrass();
+      this.scene.add(instancedMesh);
 
       //sphere
       const geometry = new Three.SphereGeometry( 45, 62, 46 );
@@ -575,6 +723,7 @@ gunung_sepuluh.translateZ(7.5)
         tween.start();
       }
     
+
     }
     if (this.air == 9) {
       this.level +=1;
@@ -592,11 +741,22 @@ gunung_sepuluh.translateZ(7.5)
         this.level5();
       }
     }
+    if (this.air == 9) {
+      this.level +=1;
 
-
-
-
-   
+      if( this.level == 2) {
+        this.level2();
+      }
+      if(this.level == 3) {
+        this.level3();
+      }
+      if(this.level == 4) {
+        this.level4();
+      }
+      if(this.level == 5) {
+        this.level5();
+      }
+    }
      },
 },
 }
