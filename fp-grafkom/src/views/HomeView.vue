@@ -723,6 +723,7 @@ gunung_sepuluh.translateZ(7.5)
         tween.start();
       }
     
+
     }
     if (this.air == 9) {
       this.level +=1;
@@ -740,11 +741,22 @@ gunung_sepuluh.translateZ(7.5)
         this.level5();
       }
     }
+    if (this.air == 9) {
+      this.level +=1;
 
-
-
-
-   
+      if( this.level == 2) {
+        this.level2();
+      }
+      if(this.level == 3) {
+        this.level3();
+      }
+      if(this.level == 4) {
+        this.level4();
+      }
+      if(this.level == 5) {
+        this.level5();
+      }
+    }
      },
 },
 }
