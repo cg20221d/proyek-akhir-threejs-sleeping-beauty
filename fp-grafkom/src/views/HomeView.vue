@@ -2,17 +2,18 @@ import "./styles/styles.css"
 <template>
     <!-- <button @click="changeButtonStat()" :disabled="!isActive" class="btn"> Add Water</button> -->
     <div class="row box">
-      <!-- <div class="column"><h1 class="puppy"> PUPPY </h1></div>
-      <div class="column jumlah-air"><h1>Jumlah Air: {{ air }} </h1></div>
+       <!-- <div class="column"><h1 class="puppy"> PUPPY </h1></div>
+      <div class="column jumlah-air"><h1>Jumlah Air: {{ air }} </h1></div> -->
     </div>
-  <div class="welcome-text">
+ <!-- <div class="welcome-text">
   <h2 class="welcome-back">Welcome Back,</h2>
-  <h1 class="name">Fadhil</h1> -->
-  </div>
+  <h1 class="name">Fadhil</h1> 
+  </div> -->
 </template>
 
 <script type="module">
 import * as Three from 'three'
+import * as Tween from '@tweenjs/tween.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader'
 import back from '../assets/Daylight-Box_Back.png'
@@ -36,7 +37,32 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+let simpleNoise = `
+    float N (vec2 st) { // https://thebookofshaders.com/10/
+        return fract( sin( dot( st.xy, vec2(12.9898,78.233 ) ) ) *  43758.5453123);
+    }
+    
+    float smoothNoise( vec2 ip ){ // https://www.youtube.com/watch?v=zXsWftRdsvU
+    	vec2 lv = fract( ip );
+      vec2 id = floor( ip );
+      
+      lv = lv * lv * ( 3. - 2. * lv );
+      
+      float bl = N( id );
+      float br = N( id + vec2( 1, 0 ));
+      float b = mix( bl, br, lv.x );
+      
+      float tl = N( id + vec2( 0, 1 ));
+      float tr = N( id + vec2( 1, 1 ));
+      float t = mix( tl, tr, lv.x );
+      
+      return mix( b, t, lv.y );
+    }
+  `;
+
 var waterometer;
+var doggo;
+var sphere;
 
 export default {
   data() {
@@ -49,6 +75,9 @@ export default {
       raycaster : null,
       user: [],
       username : "CNzGlvwWnNfZxzQW1Cz0",
+      level : 0,
+      mixer : 0,
+      clock : new Three.Clock(),
     };
   },
   mounted() {
@@ -56,9 +85,7 @@ export default {
     this.init();
     this.animate();
   },
-  updated() {
-    this.gettingBigger();
-  },
+
   methods: {
     async load() {
       try {
@@ -129,20 +156,28 @@ export default {
       const mainLight = new Three.DirectionalLight(0xffffff, 4.0)
       mainLight.position.set(15, 8, -3)
       this.scene.add(ambientLight, mainLight)
-
       loader.load(
         '/three-assets/dog1.gltf',
         gltf => {
-          var doggo = gltf.scene;
-          doggo.scale.set(200, 200, 200);
+          doggo = gltf.scene;
+          doggo.scale.set(120, 120, 120);
           // doggo.rotateY(-Math.PI/7)
           doggo.rotateY(-600)
           this.scene.add(doggo)
           doggo.position.y = -17;
+          this.level = 1;
+
+          this.mixer = new Three.AnimationMixer(doggo);
+
+          const clips = gltf.animations;
+          const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+          const action = this.mixer.clipAction(clip); 
+          action.play();
         },
         undefined,
         undefined
       )
+
 
       let skyboxGeo = new Three.BoxGeometry(10000,10000,10000);
       this.skybox = new Three.Mesh(skyboxGeo, materialArray);
@@ -199,6 +234,140 @@ export default {
       this.drawGround();
       this.drawMountain();
 
+      // rumput
+      const WIDTH = window.innerWidth;
+      const HEIGHT = window.innerHeight;
+
+      const scene = new Three.Scene();
+      const camera = new Three.PerspectiveCamera(55, WIDTH / HEIGHT, 45, 30000);
+      camera.position.set(100, 100, 100);
+
+      const renderer = new Three.WebGLRenderer({ antialias: true });
+      //renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      //const controls = new Three.OrbitControls(camera, renderer.domElement);
+
+      const clock = new Three.Clock();
+
+      ////////////
+      // MATERIAL
+      ////////////
+
+      const vertexShader = `
+  varying vec2 vUv;
+  uniform float time;
+  
+  ${simpleNoise}
+  
+	void main() {
+
+    vUv = uv;
+    float t = time * 2.;
+    
+    // VERTEX POSITION
+    
+    vec4 mvPosition = vec4( position, 1.0 );
+    #ifdef USE_INSTANCING
+    	mvPosition = instanceMatrix * mvPosition;
+    #endif
+    
+    // DISPLACEMENT
+    
+    float noise = smoothNoise(mvPosition.xz * 0.5 + vec2(0., t));
+    noise = pow(noise * 0.5 + 0.5, 2.) * 2.;
+    
+    // here the displacement is made stronger on the blades tips.
+    float dispPower = 1. - cos( uv.y * 3.1416 * 0.5 );
+    
+    float displacement = noise * ( 0.3 * dispPower );
+    mvPosition.z -= displacement;
+    
+    //
+    
+    vec4 modelViewPosition = modelViewMatrix * mvPosition;
+    gl_Position = projectionMatrix * modelViewPosition;
+
+	}
+`;
+
+      const fragmentShader = `
+  varying vec2 vUv;
+  
+  void main() {
+  	vec3 baseColor = vec3( 0.41, 1.0, 0.5 );
+    float clarity = ( vUv.y * 0.875 ) + 0.125;
+    gl_FragColor = vec4( baseColor * clarity, 1 );
+  }
+`;
+
+      const uniforms = {
+        time: {
+          value: 0
+        }
+      }
+
+      const leavesMaterial = new Three.ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms,
+        side: Three.DoubleSide
+      });
+
+      /////////
+      // MESH
+      /////////
+
+      const instanceNumber = 200000;
+      const dummy = new Three.Object3D();
+
+      const Geometry = new Three.PlaneGeometry(0.1, 1, 1, 4);
+      Geometry.translate(0, 0.5, 0); // move grass blade geometry lowest point at 0.
+
+      const instancedMesh = new Three.InstancedMesh(Geometry, leavesMaterial, instanceNumber);
+
+
+      // Position and scale the grass blade instances randomly.
+
+      for (let i = 0; i < instanceNumber; i++) {
+
+        dummy.position.set(
+          (Math.random() - 0.5) * 400,
+          -15,
+          (Math.random() - 0.3) * -450
+        );
+
+        dummy.scale.setScalar(0.5 + Math.random() * 10);
+
+        dummy.rotation.y = Math.random() * Math.PI;
+
+        dummy.updateMatrix();
+        instancedMesh.setMatrixAt(i, dummy.matrix);
+
+      }
+      const animateGrass = function () {
+
+        // Hand a time variable to vertex shader for wind displacement.
+        leavesMaterial.uniforms.time.value = clock.getElapsedTime();
+        leavesMaterial.uniformsNeedUpdate = true;
+
+        requestAnimationFrame(animateGrass);
+
+        renderer.render(scene, camera);
+      };
+
+      animateGrass();
+      this.scene.add(instancedMesh);
+
+      //sphere
+      const geometry = new Three.SphereGeometry( 45, 62, 46 );
+      const material_sphr = new Three.MeshBasicMaterial( { color: 0xffff00 } );
+      sphere = new Three.Mesh( geometry, material_sphr );
+      sphere.translateX( 150 )
+      sphere.translateY( 250 );
+      
+      this.scene.add( sphere );
+
 
       // Button
       var airY, airZ;
@@ -236,7 +405,6 @@ export default {
         // console.log(intersects.length);
         for(let i = 0; i < intersects.length; i++) {
           if(intersects[i].object.name == "button"){
-            console.log("Pressed the button");
             this.changeButtonStat();
             
           }
@@ -245,10 +413,18 @@ export default {
 
       window.addEventListener("mousedown", onMouseDown);
 
+
+
+
       this.animate();
     },
     drawGround() {
+      const rockTexture = new Three.TextureLoader().load('mountain.jpeg')
+      const groundTexture = new Three.TextureLoader().load('ground.jpeg')
 
+    rockTexture.wrapS = Three.RepeatWrapping;
+    rockTexture.wrapT = Three.RepeatWrapping;
+    rockTexture.repeat.set(2, 2);
 
       // remap value from the range of [smin,smax] to [emin,emax]
       const map = (val, smin, smax, emin, emax) => (emax-emin)*(val-smin)/(smax-smin) + emin
@@ -267,7 +443,7 @@ export default {
       const tanah = new Three.CylinderGeometry( 3.45, 11.42,12.642, 15);
 
 
-     const earthMaterial = new Three.MeshPhongMaterial({ color: 0x9d3f60, flatShading: true });
+     const earthMaterial = new Three.MeshPhongMaterial({ color: 0x9d3f60, flatShading: true , map : rockTexture});
       
       const dasar = new Three.Mesh(tanah, earthMaterial)
       jitter(dasar, 0.6)
@@ -277,7 +453,7 @@ export default {
 
 
       const tanah_atas = new Three.CylinderGeometry(8.43, 11.42, 2.8, 24, 2);
-      const atasMaterial = new Three.MeshPhongMaterial({ color: 0xec74c6, flatShading: true });
+      const atasMaterial = new Three.MeshPhongMaterial({ color: 0xec74c6, flatShading: true, map : groundTexture });
       const atas = new Three.Mesh(tanah_atas, atasMaterial)
       jitter(atas, 0)
       atas.scale.set(1.1, 1.2, 1.2)
@@ -300,8 +476,13 @@ export default {
       this.ground.translateY(117)
       // this.ground.translateY(7)
       this.ground.translateZ(80)
+
+
     },
     animate() {
+        Tween.update();
+        if(this.mixer)
+        this.mixer.update(this.clock.getDelta());
         this.renderer.render(this.scene, this.camera)
         requestAnimationFrame(this.animate);
         // this.skybox.rotation.x = this.skybox.rotation.x + 0.01;
@@ -310,17 +491,12 @@ export default {
         // console.log( this.mesh.rotation.y += 0.02)
     },
   drawMountain() {
+    const rockTexture = new Three.TextureLoader().load('mountain.jpeg')
+    rockTexture.wrapS = Three.RepeatWrapping;
+    rockTexture.wrapT = Three.RepeatWrapping;
+    rockTexture.repeat.set(2, 2);
       // remap value from the range of [smin,smax] to [emin,emax]
-      const map = (val, smin, smax, emin, emax) => (emax-emin)*(val-smin)/(smax-smin) + emin
-      const jitter = (geo, per) => {
-      var vertices = geo.geometry.attributes.position.array;
-      
-      for (let i = 0; i < vertices.length; i=i+3) {
-        vertices[i] += map(Math.random(),0,1,-per,per)
-        vertices[i+1]+= map(Math.random(),0,1,-per,per)
-        vertices[i+2] += map(Math.random(),0,1,-per,per)    
-      }
-      };
+
 
       const chopBottom = (geo, bottom) => {
       var vertices = geo.geometry.attributes.position.array;
@@ -347,10 +523,9 @@ export default {
     };
       this.mountains = new Three.Group();
       const gunung1 = new Three.CylinderGeometry(1.2,3,10,8)
-      const gunungMaterial = new Three.MeshPhongMaterial({ color: 0x232323, flatShading: true });
+      const gunungMaterial = new Three.MeshPhongMaterial({ color: 0x232323, flatShading: true, map : rockTexture });
       const gunung_satu = new Three.Mesh(gunung1, gunungMaterial);
 chopY(gunung_satu, 0.5)
-jitter(gunung_satu, 0.08)
 gunung_satu.translateY(-5)
 gunung_satu.translateX(-1)
 
@@ -367,7 +542,7 @@ gunung_satu.translateX(-1)
       gunung_dua.translateX(-3.35)
 
 
-      jitter(gunung_dua, 0.8)
+      // jitter(gunung_dua, 0.8)
 
 
       const gunung3 = new Three.ConeGeometry(4, 7.5)
@@ -383,7 +558,7 @@ gunung_satu.translateX(-1)
      gunung_tiga.translateZ(-3)
 
      gunung_tiga.rotateY(-Math.PI/9)
-     jitter(gunung_tiga, 0.8)
+    //  jitter(gunung_tiga, 0.8)
 
      
      const gunung4 = new Three.CylinderGeometry(2,3.5,8,8)
@@ -393,12 +568,12 @@ chopY(gunung_empat, 0.5)
 gunung_empat.translateX(-8)
       gunung_empat.translateZ(4.5)
 gunung_empat.translateY(-4.8)
-jitter(gunung_empat, 0.008)
+// jitter(gunung_empat, 0.008)
 
 const gunung5 = new Three.CylinderGeometry(0.5,3.2,14,8)
       const gunung_lima = new Three.Mesh(gunung5, gunungMaterial);
 chopY(gunung_lima, 0.5)
-jitter(gunung_lima, 0.08)
+// jitter(gunung_lima, 0.08)
 gunung_lima.translateX(3)
 gunung_lima.translateY(-5)
 
@@ -414,15 +589,42 @@ gunung_enam.translateZ(5)
      gunung_enam.rotateY(Math.PI)
 
 
-     const gunung7 = new Three.CylinderGeometry(0.5,3.2,14,8)
+     const gunung7 = new Three.CylinderGeometry(0.5,2.8,18,8)
 
      const gunung_tujuh = new Three.Mesh(gunung7, gunungMaterial);
 
-chopBottom(gunung_tujuh, 0.5)
-gunung_tujuh.translateY(-1.2)
+chopBottom(gunung_tujuh, 0.2)
+chopY(gunung_tujuh, 0.5)
+gunung_tujuh.translateY(-5)
 gunung_tujuh.translateX(7)
-gunung_tujuh.translateZ(5)
+gunung_tujuh.translateZ(4)
      gunung_tujuh.rotateY(Math.PI)
+
+     const gunung8 = new Three.CylinderGeometry(0.5,2.8,16,8)
+
+const gunung_delapan = new Three.Mesh(gunung8, gunungMaterial);
+
+chopBottom(gunung_delapan, 0.5)
+chopY(gunung_delapan, 0.5)
+gunung_delapan.translateY(-5)
+gunung_delapan.translateX(7.5)
+gunung_delapan.translateZ(4)
+ gunung_delapan.rotateY(Math.PI/2)
+
+ const gunung9 = new Three.ConeGeometry(3, 5)
+
+const gunung_sembilan = new Three.Mesh(gunung9, gunungMaterial);
+gunung_sembilan.translateY(-2.5)
+gunung_sembilan.translateX(6.5)
+gunung_sembilan.translateZ(5.6)
+
+const gunung10 = new Three.CylinderGeometry(0.87, 3.09, 2.401, 8, 1)
+
+const gunung_sepuluh = new Three.Mesh(gunung10, gunungMaterial);
+gunung_sepuluh.translateY(-3.5)
+gunung_sepuluh.translateX(6)
+gunung_sepuluh.translateZ(7.5)
+
 
 
 
@@ -431,49 +633,213 @@ gunung_tujuh.translateZ(5)
       this.mountains.add(gunung_tiga);
       this.mountains.add(gunung_empat);
       this.mountains.add(gunung_lima);
-      this.mountains.add(gunung_enam);
       this.mountains.add(gunung_tujuh);
+      this.mountains.add(gunung_enam);
+      this.mountains.add(gunung_delapan);
+      this.mountains.add(gunung_sepuluh);
+      this.mountains.add(gunung_sembilan);
+
       this.scene.add(this.mountains);
 
       this.mountains.scale.set(15,15, 15)
       this.mountains.translateZ(-140)
       this.mountains.translateY(50)
   },
-  gettingBigger() {
-    console.log(this.air)
-    if (this.air == 4) {
-      this.renderer.clear();
-      this.scene.remove(this.mesh);
-      let geometry = new Three.CircleGeometry( 1, 8, 0, 6.283185307179586 );
-      let material = new Three.MeshBasicMaterial( { color: 0xffff00 } );
+  level2() {
+    this.air = 0;
+    this.scene.remove( doggo );
+    const loader = new GLTFLoader()
+    loader.load(
+        '/three-assets/dog2.gltf',
+        gltf => {
+          doggo = gltf.scene;
+          doggo.scale.set(65, 65, 65);
+          // doggo.rotateY(-Math.PI/7)
+          doggo.rotateY(-600)
+          this.scene.add(doggo)
+          doggo.position.y = -17;
+          this.mixer = new Three.AnimationMixer(doggo);
 
-      this.mesh = new Three.Mesh(geometry, material);
-      this.scene.add(this.mesh);
+        const clips = gltf.animations;
+        const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction.001');
+        const action = this.mixer.clipAction(clip); 
+        action.play();
+        },
+        undefined,
+        undefined
+      )
+  },
+  level3() {
+    this.air = 0;
+    this.scene.remove( doggo );
+    const loader = new GLTFLoader()
+    loader.load(
+        '/three-assets/dog3.gltf',
+        gltf => {
+          doggo = gltf.scene;
+          doggo.scale.set(50, 50, 50);
+          // doggo.rotateY(-Math.PI/7)
+          doggo.rotateY(-600)
+          this.scene.add(doggo)
+          doggo.position.y = -17;
+          this.mixer = new Three.AnimationMixer(doggo);
 
-      this.animate();
+        const clips = gltf.animations;
+        const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction.001');
+        const action = this.mixer.clipAction(clip); 
+        action.play();
+        },
+        undefined,
+        undefined
+      )
 
-    }
+  },
+  level4() {
+    this.air = 0;
+    this.scene.remove( doggo );
+    const loader = new GLTFLoader()
+    loader.load(
+        '/three-assets/dog4.gltf',
+        gltf => {
+          doggo = gltf.scene;
+          doggo.scale.set(40, 40, 40);
+          // doggo.rotateY(-Math.PI/7)
+          // doggo.rotateY(-600)
+          this.scene.add(doggo)
+          doggo.position.y = -17;
+          this.mixer = new Three.AnimationMixer(doggo);
+
+        const clips = gltf.animations;
+        const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+        const action = this.mixer.clipAction(clip); 
+        action.play();
+        },
+        undefined,
+        undefined
+      )
+
+  },
+  level5() {
+    this.air = 0;
+    this.scene.remove( doggo );
+    const loader = new GLTFLoader()
+    loader.load(
+        '/three-assets/dog5.gltf',
+        gltf => {
+          doggo = gltf.scene;
+          doggo.scale.set(50, 50, 50);
+          // doggo.rotateY(-Math.PI/7)
+          doggo.rotateY(-600)
+          this.scene.add(doggo)
+          doggo.position.y = -17;
+          this.mixer = new Three.AnimationMixer(doggo);
+
+        const clips = gltf.animations;
+        const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+        const action = this.mixer.clipAction(clip); 
+        action.play();
+        },
+        undefined,
+        undefined
+      )
+
   },
   changeButtonStat() {
     this.air += 1;
     console.log(this.air);
+    console.log("this.level =" + this.level)
     if(this.air <= 8) {
       waterometer.geometry.dispose();
-      // waterometer.geometry = new Three.CylinderGeometry(20, 20, this.air/8 * 200, 32, 16 );
       waterometer.geometry = new Three.CapsuleGeometry(20, this.air/8 * 200, 32, 16 );
       waterometer.position.y = (-(100 - this.air/8 * 200)/2);
-    }
 
-    // this.isActive = false;
-    // var x = setInterval(() => {    
-    //            this.isActive = false;
-    //            this.count++;
-    //            if (this.count == 3) {
-    //             this.count = 0;
-    //             this.isActive = true;
-    //             clearInterval(x);
-    //            }  
-    //       }, 1000);        
+      if (this.air == 4 && this.level == 1) {
+
+        var tween1 = new Tween.Tween(doggo.scale).to({
+          x: 150,
+          y: 150,
+          z: 150,
+        }, 1500)
+        .easing(Tween.Easing.Elastic.Out)
+        .delay(100);
+
+        tween1.start();
+      }
+
+      if (this.air == 4 && this.level == 2) {
+
+        var tween2 = new Tween.Tween(doggo.scale).to({
+          x: 85,
+          y: 85,
+          z: 85,
+        }, 1500)
+        .easing(Tween.Easing.Elastic.Out)
+        .delay(100);
+
+        tween2.start();
+        }
+
+        if (this.air == 4 && this.level == 3) {
+
+        var tween3 = new Tween.Tween(doggo.scale).to({
+          x: 70,
+          y: 70,
+          z: 70,
+        }, 1500)
+        .easing(Tween.Easing.Elastic.Out)
+        .delay(100);
+
+        tween3.start();
+        }
+
+        if (this.air == 4 && (this.level == 4 || this.level == 5)) {
+
+        var tween4 = new Tween.Tween(doggo.scale).to({
+          x: 65,
+          y: 65,
+          z: 65,
+        }, 1500)
+        .easing(Tween.Easing.Elastic.Out)
+        .delay(100);
+
+        tween4.start();
+        }
+
+    
+
+    }
+    if (this.air == 9) {
+      this.level +=1;
+
+      if( this.level == 2) {
+        this.level2();
+      }
+      if(this.level == 3) {
+        this.level3();
+      }
+      if(this.level == 4) {
+        this.level4();
+      }
+      if(this.level == 5) {
+        this.level5();
+      }
+    }
+    if (this.air == 9) {
+      this.level +=1;
+
+      if( this.level == 2) {
+        this.level2();
+      }
+      if(this.level == 3) {
+        this.level3();
+      }
+      if(this.level == 4) {
+        this.level4();
+      }
+      if(this.level == 5) {
+        this.level5();
+      }
+    }
      },
 },
 }
