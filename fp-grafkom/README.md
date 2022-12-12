@@ -19,6 +19,10 @@ npm run build
 ```
 npm run lint
 ```
+### Tween Instalation for animation
+```
+npm i @tweenjs/tween.js@^18
+```
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
