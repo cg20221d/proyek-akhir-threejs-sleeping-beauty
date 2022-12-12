@@ -1,4 +1,3 @@
-import "./styles/styles.css"
 <template>
     <!-- <button @click="changeButtonStat()" :disabled="!isActive" class="btn"> Add Water</button> -->
     <div class="row box">
@@ -59,6 +58,11 @@ let simpleNoise = `
       return mix( b, t, lv.y );
     }
   `;
+
+import "./styles/styles.css"
+// import { EffectComposer } from "/node_modules/three/examples/jsm/postprocessing/EffectComposer.js";
+// import { RenderPass } from "/node_modules/three/examples/jsm/postprocessing/RenderPass.js";
+// import { UnrealBloomPass } from "/node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js";
 
 var waterometer;
 var doggo;
@@ -200,12 +204,6 @@ export default {
       });
       material.transparent = true;
       material.opacity = 0.3;
-      // const sphere1 = new Three.Mesh( geometry, material );
-      // const sphere2 = new Three.Mesh( geometry, material );
-      // sphere1.translateY(200).translateX( -100 );
-      // sphere2.translateY(-100).translateX( -100 ).rotateX(Math.PI);
-      // this.scene.add( sphere1 );
-      // this.scene.add( sphere2 );
 
       // const cylGeometry1 = new Three.CylinderGeometry(25, 25, 200, 32, 16, true, );
       const cylGeometry1 = new Three.CapsuleGeometry(25, 200, 32, 16 );
@@ -367,6 +365,30 @@ export default {
       sphere.translateY( 250 );
       
       this.scene.add( sphere );
+
+      // const renderScene = new RenderPass(this.scene, this.camera);
+      // const bloomPass = new UnrealBloomPass(
+      //   new Three.Vector2(window.innerWidth, window.innerHeight),
+      //   1.5,
+      //   0.4,
+      //   0.85
+      // );
+      // bloomPass.threshold = 0;
+      // bloomPass.strength = 2; //intensity of glow
+      // bloomPass.radius = 0;
+      // const bloomComposer = new EffectComposer(this.renderer);
+      // bloomComposer.setSize(window.innerWidth, window.innerHeight);
+      // bloomComposer.renderToScreen = true;
+      // bloomComposer.addPass(renderScene);
+      // bloomComposer.addPass(bloomPass);
+
+      // const color = new THREE.Color("#FDB813");
+      // const geometry = new THREE.IcosahedronGeometry(1, 15);
+      // const material = new THREE.MeshBasicMaterial({ color: color });
+      // const sphere = new THREE.Mesh(geometry, material);
+      // sphere.position.set(0, 0, 0);
+      // sphere.layers.set(1);
+      // scene.add(sphere);
 
 
       // Button
