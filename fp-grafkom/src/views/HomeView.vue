@@ -21,6 +21,7 @@ import front from '../assets/Daylight-Box_Front.png'
 import left from '../assets/Daylight-Box_Left.png'
 import right from '../assets/Daylight-Box_Right.png'
 import top from '../assets/Daylight-Box_Top.png'
+import sun from '../assets/sun.jpg'
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 
@@ -67,6 +68,8 @@ import "./styles/styles.css"
 var waterometer;
 var doggo;
 var sphere;
+
+const textureLoader = new Three.TextureLoader();
 
 export default {
   data() {
@@ -316,7 +319,7 @@ export default {
       // MESH
       /////////
 
-      const instanceNumber = 200000;
+      const instanceNumber = 100000;
       const dummy = new Three.Object3D();
 
       const Geometry = new Three.PlaneGeometry(0.1, 1, 1, 4);
@@ -359,7 +362,10 @@ export default {
 
       //sphere
       const geometry = new Three.SphereGeometry( 45, 62, 46 );
-      const material_sphr = new Three.MeshBasicMaterial( { color: 0xffff00 } );
+      const material_sphr = new Three.MeshBasicMaterial( { 
+        color: 0xffff00,
+        map : textureLoader.load(sun)
+      } );
       sphere = new Three.Mesh( geometry, material_sphr );
       sphere.translateX( 150 )
       sphere.translateY( 250 );
@@ -390,6 +396,53 @@ export default {
       // sphere.layers.set(1);
       // scene.add(sphere);
 
+
+      // environment
+      var shapeOne = new Three.Mesh(
+        new Three.OctahedronGeometry(20,1),
+        new Three.MeshStandardMaterial( {
+            color: 0xff0051,
+            metalness: 0,
+            roughness: 1
+      })
+      );
+      shapeOne.position.y += 200;
+      shapeOne.position.x += -40;
+
+      var shapeTwo = new Three.Mesh(
+      new Three.OctahedronGeometry(5,1),
+      new Three.MeshStandardMaterial({
+          color: 0x47689b,
+          metalness: 0,
+          roughness: 0.8
+      })
+      );
+      shapeTwo.position.y += 200;
+      shapeTwo.position.x += -80;
+
+      this.scene.add(shapeOne, shapeTwo);
+
+      this.renderer.shadowMap.enabled = true;
+      this.renderer.shadowMap.type = Three.PCFSoftShadowMap;
+
+      var pointLight = new Three.PointLight( 0xffffff, 1 );
+      pointLight.position.set( 25, 50, 25 );
+      this.scene.add( pointLight );
+
+      shapeOne.castShadow = true;
+      shapeOne.receiveShadow = true;
+      shapeTwo.castShadow = true;
+      shapeTwo.receiveShadow = true;
+
+      var shadowMaterial = new Three.ShadowMaterial( { color: 0xeeeeee } );
+      shadowMaterial.opacity = 0.5;
+
+      function animate_env(){
+        shapeOne.rotateY(0.04);
+        sphere.rotateY(0.004);
+      }
+
+      this.renderer.setAnimationLoop(animate_env);
 
       // Button
       var airY, airZ;
