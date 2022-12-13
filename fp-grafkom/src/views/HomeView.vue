@@ -7,6 +7,10 @@
   <!-- <div class="welcome-text">
   <h2 class="welcome-back">Welcome Back,</h2>
   <h1 class="name">Fadhil</h1> 
+  <audio
+  autoplay
+  loop
+  src="proyek-akhir-threejs-sleeping-beauty/fp-grafkom/src/assets/Dorothy (Remastered).mp3"></audio>
   </div> -->
 </template>
 
