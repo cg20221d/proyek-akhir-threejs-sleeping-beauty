@@ -10,7 +10,7 @@
   <audio 
   autoplay
   loop
-  src="proyek-akhir-threejs-sleeping-beauty/fp-grafkom/src/assets/Dorothy (Remastered).mp3"></audio>
+  src="fp-grafkom/public/three-assets/Dorothy (Remastered).mp3"></audio>
   </div> -->
 </template>
 
@@ -77,9 +77,10 @@ var waterometer;
 var doggo;
 var piggy;
 var sphere;
-var cloud;
+var cloud, cloud2;
 
-const textureLoader = new Three.TextureLoader();
+// const audio = new Audio("fp-grafkom/src/assets/Drinking sound effect.mp3");
+// const textureLoader = new Three.TextureLoader();
 
 export default {
   data() {
@@ -258,6 +259,11 @@ export default {
       this.skybox = new Three.Mesh(skyboxGeo, materialArray);
       this.skybox.name = "Skybox";
       this.scene.add(this.skybox);
+      const waterTexture = new Three.TextureLoader().load('air.jpeg')
+
+waterTexture.wrapS = Three.RepeatWrapping;
+waterTexture.wrapT = Three.RepeatWrapping;
+waterTexture.repeat.set(2, 2);
 
       // Make the water-o-meter
       // const geometry = new Three.SphereGeometry( 25 , 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
@@ -272,10 +278,12 @@ export default {
         reflectivity: 0.2,
         ior: 0.9,
         side: Three.BackSide,
+        map: waterTexture,
       });
       material.transparent = true;
       material.opacity = 0.3;
 
+      const textureLoader = new Three.TextureLoader();
       // const cylGeometry1 = new Three.CylinderGeometry(25, 25, 200, 32, 16, true, );
       const cylGeometry1 = new Three.CapsuleGeometry(25, 200, 32, 16);
       // const cylMaterial1 = new Three.MeshBasicMaterial( { color: 0xff00ff, side: Three.BackSide, wireframe: true } );
@@ -293,7 +301,8 @@ export default {
         opacity: 0.7,
         reflectivity: 0.2,
         refractionRatio: 0.5,
-        side: Three.BackSide
+        side: Three.BackSide,
+        map: waterTexture,
       });
       waterometer = new Three.Mesh(waterGeo, cylMaterial2);
       waterometer.translateY(-(100 - height) / 2);
@@ -530,24 +539,45 @@ export default {
         })
       )
 
-      this.scene.add(cloud);
+      const tuft4 = new Three.SphereGeometry(15.5,21,10.5)
+      tuft4.translate(-30,400,50)
+
+      const tuft5 = new Three.SphereGeometry(15.5,21,10.5)
+      tuft5.translate(30,400,50)
+
+      const tuft6 = new Three.SphereGeometry(25.0,21,10.5)
+      tuft6.translate(0,405,50)
+
+      const geo_cld2 = BufferGeometryUtils.mergeBufferGeometries([tuft4, tuft5, tuft6]);
+
+      cloud2 = new Three.Mesh(
+          geo_cld2,
+          new Three.MeshLambertMaterial({
+              color:'white',
+              flatShading:true,
+          })
+      )
+
+      this.scene.add(cloud, cloud2);
 
       function animate_env() {
         shapeOne.rotateY(0.04);
         sphere.rotateY(0.004);
         cloud.rotateZ(0.004);
+        cloud2.rotateZ(0.007);
       }
 
       this.renderer.setAnimationLoop(animate_env);
 
       // Button
+
       var airY, airZ;
       airY = -100;
       airZ = 120;
       var airAtasRad = 92.364
       var airBawah = new Three.SphereGeometry(50 / 4, 32, 16, 0);
       var airAtas = new Three.ConeGeometry(airAtasRad / 8, 111.48 / 4, 32);
-      const airMat = new Three.MeshBasicMaterial({ color: 0xa9dcec });
+      const airMat = new Three.MeshBasicMaterial({ color: 0xa9dcec, map: waterTexture});
       const airBawahMesh = new Three.Mesh(airBawah, airMat);
       const airAtasMesh = new Three.Mesh(airAtas, airMat);
       airBawahMesh.translateY(airY).translateZ(airZ);
@@ -568,8 +598,6 @@ export default {
       this.pointer = new Three.Vector2();
       this.raycaster = new Three.Raycaster();
 
-      const audio = new Audio("fp-grafkom/src/assets/Drinking sound effect.mp3");
-
       const onMouseDown = (event) => {
         this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -579,7 +607,7 @@ export default {
         for (let i = 0; i < intersects.length; i++) {
           if (intersects[i].object.name == "button") {
             this.changeButtonStat();
-            audio.play();
+            // audio.play();
           }
         }
       };
