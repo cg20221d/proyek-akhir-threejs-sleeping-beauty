@@ -75,6 +75,7 @@ import "./styles/styles.css"
 
 var waterometer;
 var doggo;
+var piggy;
 var sphere;
 var cloud;
 
@@ -109,7 +110,7 @@ export default {
         //   const querySnapshot = await getDocs(collection(db, "TestCollection"));
         const querySnapshot = await getDocs(collection(db, "TestCollection"));
         querySnapshot.forEach((doc) => {
-          if(doc.data().username == this.username) {
+          if (doc.data().username == this.username) {
             console.log(doc.data());
             this.user = doc.data();
             console.log(this.user);
@@ -118,7 +119,7 @@ export default {
 
         console.log("Length = " + this.user.day.length);
 
-        if(this.user.day.length > 0) {
+        if (this.user.day.length > 0) {
           console.log("Masuk ke length > 0");
           var tzoffset = (new Date()).getTimezoneOffset() * 60000;
           var harike = this.user.day.length - 1;
@@ -126,7 +127,7 @@ export default {
           // var date = new Date(this.user.day[this.user.day.length - 1].date.seconds * 1000 ).toISOString().slice(0, 10);
           var today = new Date().toISOString().slice(0, 10)
           console.log(date, today);
-          if(date == today) {
+          if (date == today) {
             this.air = this.user.day[harike].air;
             this.level = this.user.day[harike].level;
             console.log("Air = " + this.air);
@@ -197,7 +198,7 @@ export default {
       for (let i = 0; i < 6; i++)
         materialArray[i].side = Three.BackSide;
 
-        const ambientLight = new Three.HemisphereLight(
+      const ambientLight = new Three.HemisphereLight(
         0xffffff, // bright sky color
         0x222222, // dim ground color
         1 // intensity
@@ -206,44 +207,44 @@ export default {
       mainLight.position.set(15, 8, -3)
       this.scene.add(ambientLight, mainLight)
 
-     
+
       console.log("Level di init = " + this.level)
       if (this.level == 1) {
         const loader = new GLTFLoader()
-      loader.load(
-        '/three-assets/dog1.gltf',
-        gltf => {
-          doggo = gltf.scene;
-          doggo.scale.set(120, 120, 120);
-          // doggo.rotateY(-Math.PI/7)
-          doggo.rotateY(-600)
-          this.scene.add(doggo)
-          doggo.position.y = -17;
-          // this.level = 1;
+        loader.load(
+          '/three-assets/dog1.gltf',
+          gltf => {
+            doggo = gltf.scene;
+            doggo.scale.set(120, 120, 120);
+            // doggo.rotateY(-Math.PI/7)
+            doggo.rotateY(-600)
+            this.scene.add(doggo)
+            doggo.position.y = -17;
+            // this.level = 1;
 
-          this.mixer = new Three.AnimationMixer(doggo);
+            this.mixer = new Three.AnimationMixer(doggo);
 
-          const clips = gltf.animations;
-          const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
-          const action = this.mixer.clipAction(clip);
-          action.play();
-        },
-        undefined,
-        undefined
-      )
-        }
+            const clips = gltf.animations;
+            const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+            const action = this.mixer.clipAction(clip);
+            action.play();
+          },
+          undefined,
+          undefined
+        )
+      }
       if (this.level == 2) {
-          this.level2();
-        }
-        if (this.level == 3) {
-          this.level3();
-        }
-        if (this.level == 4) {
-          this.level4();
-        }
-        if (this.level == 5) {
-          this.level5();
-        }
+        this.level2();
+      }
+      if (this.level == 3) {
+        this.level3();
+      }
+      if (this.level == 4) {
+        this.level4();
+      }
+      if (this.level == 5) {
+        this.level5();
+      }
 
       let skyboxGeo = new Three.BoxGeometry(10000, 10000, 10000);
       this.skybox = new Three.Mesh(skyboxGeo, materialArray);
@@ -406,21 +407,21 @@ export default {
 
       //sphere
 
-//       const renderScene = new RenderPass(this.scene, this.camera);
-// const bloomPass = new UnrealBloomPass(
-//   new Three.Vector2(window.innerWidth, window.innerHeight),
-//   1.5,
-//   0.4,
-//   0.85
-// );
-// bloomPass.threshold = 10;
-// bloomPass.strength = 10; //intensity of glow
-// bloomPass.radius = 10;
-// const bloomComposer = new EffectComposer(this.renderer);
-// bloomComposer.setSize(window.innerWidth, window.innerHeight);
-// bloomComposer.renderToScreen = true;
-// bloomComposer.addPass(renderScene);
-// bloomComposer.addPass(bloomPass);
+      //       const renderScene = new RenderPass(this.scene, this.camera);
+      // const bloomPass = new UnrealBloomPass(
+      //   new Three.Vector2(window.innerWidth, window.innerHeight),
+      //   1.5,
+      //   0.4,
+      //   0.85
+      // );
+      // bloomPass.threshold = 10;
+      // bloomPass.strength = 10; //intensity of glow
+      // bloomPass.radius = 10;
+      // const bloomComposer = new EffectComposer(this.renderer);
+      // bloomComposer.setSize(window.innerWidth, window.innerHeight);
+      // bloomComposer.renderToScreen = true;
+      // bloomComposer.addPass(renderScene);
+      // bloomComposer.addPass(bloomPass);
 
       const geometry = new Three.SphereGeometry(45, 62, 46);
       const material_sphr = new Three.MeshBasicMaterial({
@@ -430,7 +431,7 @@ export default {
       sphere = new Three.Mesh(geometry, material_sphr);
       sphere.translateX(150);
       sphere.translateY(250);
-      
+
       this.scene.add(sphere);
       // bloomComposer.setSize(window.innerWidth, window.innerHeight);
       // this.scene.add(bloomComposer);
@@ -502,23 +503,23 @@ export default {
       //cloud
       // const geo = new Three.BufferGeometry()
 
-      const tuft1 = new Three.SphereGeometry(15.5,21,10.5)
-      tuft1.translate(-30,400,0)
+      const tuft1 = new Three.SphereGeometry(15.5, 21, 10.5)
+      tuft1.translate(-30, 400, 0)
 
-      const tuft2 = new Three.SphereGeometry(15.5,21,10.5)
-      tuft2.translate(30,400,0)
+      const tuft2 = new Three.SphereGeometry(15.5, 21, 10.5)
+      tuft2.translate(30, 400, 0)
 
-      const tuft3 = new Three.SphereGeometry(25.0,21,10.5)
-      tuft3.translate(0,405,0)
+      const tuft3 = new Three.SphereGeometry(25.0, 21, 10.5)
+      tuft3.translate(0, 405, 0)
 
       const geo_cld = BufferGeometryUtils.mergeBufferGeometries([tuft1, tuft2, tuft3]);
 
       cloud = new Three.Mesh(
-          geo_cld,
-          new Three.MeshLambertMaterial({
-              color:'white',
-              flatShading:true,
-          })
+        geo_cld,
+        new Three.MeshLambertMaterial({
+          color: 'white',
+          flatShading: true,
+        })
       )
 
       this.scene.add(cloud);
@@ -796,10 +797,10 @@ export default {
       this.mountains.translateY(50)
     },
     level2() {
-      
+
       this.scene.remove(doggo);
       const loader = new GLTFLoader()
-      if(this.air < 4)
+      if (this.air < 4)
         loader.load(
           '/three-assets/dog2.gltf',
           gltf => {
@@ -843,140 +844,278 @@ export default {
     level3() {
       this.scene.remove(doggo);
       const loader = new GLTFLoader()
-      if(this.air < 4)
-      loader.load(
-        '/three-assets/dog3.gltf',
-        gltf => {
-          doggo = gltf.scene;
-          doggo.scale.set(50, 50, 50);
-          // doggo.rotateY(-Math.PI/7)
-          doggo.rotateY(-600)
-          this.scene.add(doggo)
-          doggo.position.y = -17;
-          this.mixer = new Three.AnimationMixer(doggo);
+      if (this.air < 4)
+        loader.load(
+          '/three-assets/dog3.gltf',
+          gltf => {
+            doggo = gltf.scene;
+            doggo.scale.set(50, 50, 50);
+            // doggo.rotateY(-Math.PI/7)
+            doggo.rotateY(-600)
+            this.scene.add(doggo)
+            doggo.position.y = -17;
+            this.mixer = new Three.AnimationMixer(doggo);
 
-          const clips = gltf.animations;
-          const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction.001');
-          const action = this.mixer.clipAction(clip);
-          action.play();
-        },
-        undefined,
-        undefined
-      )
+            const clips = gltf.animations;
+            const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction.001');
+            const action = this.mixer.clipAction(clip);
+            action.play();
+          },
+          undefined,
+          undefined
+        )
       else
-      loader.load(
-        '/three-assets/dog3.gltf',
-        gltf => {
-          doggo = gltf.scene;
-          doggo.scale.set(50, 50, 50);
-          // doggo.rotateY(-Math.PI/7)
-          doggo.rotateY(-600)
-          this.scene.add(doggo)
-          doggo.position.y = -17;
-          this.mixer = new Three.AnimationMixer(doggo);
+        loader.load(
+          '/three-assets/dog3.gltf',
+          gltf => {
+            doggo = gltf.scene;
+            doggo.scale.set(50, 50, 50);
+            // doggo.rotateY(-Math.PI/7)
+            doggo.rotateY(-600)
+            this.scene.add(doggo)
+            doggo.position.y = -17;
+            this.mixer = new Three.AnimationMixer(doggo);
 
-          const clips = gltf.animations;
-          const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction.001');
-          const action = this.mixer.clipAction(clip);
-          action.play();
-        },
-        undefined,
-        undefined
-      )
+            const clips = gltf.animations;
+            const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction.001');
+            const action = this.mixer.clipAction(clip);
+            action.play();
+          },
+          undefined,
+          undefined
+        )
 
     },
     level4() {
-      
+
       this.scene.remove(doggo);
       const loader = new GLTFLoader()
-      if(this.air < 4)
-      loader.load(
-        '/three-assets/dog4.gltf',
-        gltf => {
-          doggo = gltf.scene;
-          doggo.scale.set(40, 40, 40);
-          // doggo.rotateY(-Math.PI/7)
-          // doggo.rotateY(-600)
-          this.scene.add(doggo)
-          doggo.position.y = -17;
-          this.mixer = new Three.AnimationMixer(doggo);
+      if (this.air < 4)
+        loader.load(
+          '/three-assets/dog4.gltf',
+          gltf => {
+            doggo = gltf.scene;
+            doggo.scale.set(40, 40, 40);
+            // doggo.rotateY(-Math.PI/7)
+            // doggo.rotateY(-600)
+            this.scene.add(doggo)
+            doggo.position.y = -17;
+            this.mixer = new Three.AnimationMixer(doggo);
 
-          const clips = gltf.animations;
-          const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
-          const action = this.mixer.clipAction(clip);
-          action.play();
-        },
-        undefined,
-        undefined
-      )
+            const clips = gltf.animations;
+            const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+            const action = this.mixer.clipAction(clip);
+            action.play();
+          },
+          undefined,
+          undefined
+        )
       else
-      loader.load(
-        '/three-assets/dog4.gltf',
-        gltf => {
-          doggo = gltf.scene;
-          doggo.scale.set(65, 65, 65);
-          // doggo.rotateY(-Math.PI/7)
-          // doggo.rotateY(-600)
-          this.scene.add(doggo)
-          doggo.position.y = -17;
-          this.mixer = new Three.AnimationMixer(doggo);
+        loader.load(
+          '/three-assets/dog4.gltf',
+          gltf => {
+            doggo = gltf.scene;
+            doggo.scale.set(65, 65, 65);
+            // doggo.rotateY(-Math.PI/7)
+            // doggo.rotateY(-600)
+            this.scene.add(doggo)
+            doggo.position.y = -17;
+            this.mixer = new Three.AnimationMixer(doggo);
 
-          const clips = gltf.animations;
-          const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
-          const action = this.mixer.clipAction(clip);
-          action.play();
-        },
-        undefined,
-        undefined
-      )
+            const clips = gltf.animations;
+            const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+            const action = this.mixer.clipAction(clip);
+            action.play();
+          },
+          undefined,
+          undefined
+        )
 
     },
     level5() {
-      
+
       this.scene.remove(doggo);
       const loader = new GLTFLoader()
-      if(this.air < 4)
-      loader.load(
-        '/three-assets/dog5.gltf',
-        gltf => {
-          doggo = gltf.scene;
-          doggo.scale.set(50, 50, 50);
-          // doggo.rotateY(-Math.PI/7)
-          doggo.rotateY(-600)
-          this.scene.add(doggo)
-          doggo.position.y = -17;
-          this.mixer = new Three.AnimationMixer(doggo);
+      if (this.air < 4)
+        loader.load(
+          '/three-assets/dog5.gltf',
+          gltf => {
+            doggo = gltf.scene;
+            doggo.scale.set(50, 50, 50);
+            // doggo.rotateY(-Math.PI/7)
+            doggo.rotateY(-600)
+            this.scene.add(doggo)
+            doggo.position.y = -17;
+            this.mixer = new Three.AnimationMixer(doggo);
 
-          const clips = gltf.animations;
-          const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
-          const action = this.mixer.clipAction(clip);
-          action.play();
-        },
-        undefined,
-        undefined
-      )
+            const clips = gltf.animations;
+            const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+            const action = this.mixer.clipAction(clip);
+            action.play();
+          },
+          undefined,
+          undefined
+        )
       else
-      loader.load(
-        '/three-assets/dog5.gltf',
-        gltf => {
-          doggo = gltf.scene;
-          doggo.scale.set(65, 65, 65);
-          // doggo.rotateY(-Math.PI/7)
-          doggo.rotateY(-600)
-          this.scene.add(doggo)
-          doggo.position.y = -17;
-          this.mixer = new Three.AnimationMixer(doggo);
+        loader.load(
+          '/three-assets/dog5.gltf',
+          gltf => {
+            doggo = gltf.scene;
+            doggo.scale.set(65, 65, 65);
+            // doggo.rotateY(-Math.PI/7)
+            doggo.rotateY(-600)
+            this.scene.add(doggo)
+            doggo.position.y = -17;
+            this.mixer = new Three.AnimationMixer(doggo);
 
-          const clips = gltf.animations;
-          const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
-          const action = this.mixer.clipAction(clip);
-          action.play();
-        },
-        undefined,
-        undefined
-      )
+            const clips = gltf.animations;
+            const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+            const action = this.mixer.clipAction(clip);
+            action.play();
+          },
+          undefined,
+          undefined
+        )
 
     },
+    level6() {
+
+      this.scene.remove(doggo);
+      const loader = new GLTFLoader()
+      if (this.air < 4)
+        loader.load(
+          '/three-assets/pig1.gltf',
+          gltf => {
+            piggy = gltf.scene;
+            piggy.scale.set(50, 50, 50);
+            piggy.rotateY(-Math.PI/7)
+            piggy.rotateY(-1300)
+            this.scene.add(piggy)
+            doggo.position.y = -17;
+            this.mixer = new Three.AnimationMixer(piggy);
+
+            const clips = gltf.animations;
+            const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+            const action = this.mixer.clipAction(clip);
+            action.play();
+          },
+          undefined,
+          undefined
+        )
+      else
+        loader.load(
+          '/three-assets/pig1.gltf',
+          gltf => {
+            piggy = gltf.scene;
+            piggy.scale.set(65, 65, 65);
+            piggy.rotateY(-Math.PI/7)
+            piggy.rotateY(-1300)
+            this.scene.add(piggy)
+            piggy.position.y = -17;
+            this.mixer = new Three.AnimationMixer(piggy);
+
+            const clips = gltf.animations;
+            const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+            const action = this.mixer.clipAction(clip);
+            action.play();
+          },
+          undefined,
+          undefined
+        )
+
+    },
+    level7() {
+
+this.scene.remove(piggy);
+const loader = new GLTFLoader()
+if (this.air < 4)
+  loader.load(
+    '/three-assets/pig2.gltf',
+    gltf => {
+      piggy = gltf.scene;
+      piggy.scale.set(65, 65, 65);
+      piggy.rotateY(-Math.PI/7)
+      piggy.rotateY(-1300)
+      this.scene.add(piggy)
+      doggo.position.y = -17;
+      this.mixer = new Three.AnimationMixer(piggy);
+
+      const clips = gltf.animations;
+      const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+      const action = this.mixer.clipAction(clip);
+      action.play();
+    },
+    undefined,
+    undefined
+  )
+else
+  loader.load(
+    '/three-assets/pig2.gltf',
+    gltf => {
+      piggy = gltf.scene;
+      piggy.scale.set(75, 75, 75);
+      piggy.rotateY(-Math.PI/7)
+      piggy.rotateY(-1300)
+      this.scene.add(piggy)
+      piggy.position.y = -17;
+      this.mixer = new Three.AnimationMixer(piggy);
+
+      const clips = gltf.animations;
+      const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+      const action = this.mixer.clipAction(clip);
+      action.play();
+    },
+    undefined,
+    undefined
+  )
+
+},
+level8() {
+
+this.scene.remove(piggy);
+const loader = new GLTFLoader()
+if (this.air < 4)
+  loader.load(
+    '/three-assets/pig3.gltf',
+    gltf => {
+      piggy = gltf.scene;
+      piggy.scale.set(75, 75, 75);
+      piggy.rotateY(-Math.PI/7)
+      piggy.rotateY(-1300)
+      this.scene.add(piggy)
+      doggo.position.y = -17;
+      this.mixer = new Three.AnimationMixer(piggy);
+
+      const clips = gltf.animations;
+      const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+      const action = this.mixer.clipAction(clip);
+      action.play();
+    },
+    undefined,
+    undefined
+  )
+else
+  loader.load(
+    '/three-assets/pig3.gltf',
+    gltf => {
+      piggy = gltf.scene;
+      piggy.scale.set(85, 85, 85);
+      piggy.rotateY(-Math.PI/7)
+      piggy.rotateY(-1300)
+      this.scene.add(piggy)
+      piggy.position.y = -17;
+      this.mixer = new Three.AnimationMixer(piggy);
+
+      const clips = gltf.animations;
+      const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+      const action = this.mixer.clipAction(clip);
+      action.play();
+    },
+    undefined,
+    undefined
+  )
+
+},
     changeButtonStat() {
       this.air += 1;
       console.log(this.air);
@@ -1037,12 +1176,34 @@ export default {
 
           tween4.start();
         }
+        if (this.air == 4 && (this.level == 6 || this.level == 7)) {
 
+          var tween5 = new Tween.Tween(piggy.scale).to({
+            x: 80,
+            y: 80,
+            z: 80,
+          }, 1500)
+            .easing(Tween.Easing.Elastic.Out)
+            .delay(100);
 
+          tween5.start();
+        }
 
+        if (this.air == 4 && (this.level == 8)) {
+
+          var tween6 = new Tween.Tween(piggy.scale).to({
+            x: 90,
+            y: 90,
+            z: 90,
+          }, 1500)
+            .easing(Tween.Easing.Elastic.Out)
+            .delay(100);
+
+          tween6.start();
+        }
       }
       if (this.air == 9) {
-        
+
         this.level += 1;
         this.air = 0;
         console.log("Air changed to " + this.air);
@@ -1061,6 +1222,15 @@ export default {
         }
         if (this.level == 5) {
           this.level5();
+        }
+        if (this.level == 6) {
+          this.level6();
+        }
+        if (this.level == 7) {
+          this.level7();
+        }
+        if (this.level == 8) {
+          this.level8();
         }
       }
       // if (this.air == 9) {
