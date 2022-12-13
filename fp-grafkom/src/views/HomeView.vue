@@ -7,7 +7,7 @@
   <!-- <div class="welcome-text">
   <h2 class="welcome-back">Welcome Back,</h2>
   <h1 class="name">Fadhil</h1> 
-  <audio
+  <audio 
   autoplay
   loop
   src="proyek-akhir-threejs-sleeping-beauty/fp-grafkom/src/assets/Dorothy (Remastered).mp3"></audio>
@@ -509,6 +509,8 @@ bloomComposer.addPass(bloomPass);
       this.pointer = new Three.Vector2();
       this.raycaster = new Three.Raycaster();
 
+      const audio = new Audio("fp-grafkom/src/assets/Drinking sound effect.mp3");
+
       const onMouseDown = (event) => {
         this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -518,7 +520,7 @@ bloomComposer.addPass(bloomPass);
         for (let i = 0; i < intersects.length; i++) {
           if (intersects[i].object.name == "button") {
             this.changeButtonStat();
-
+            audio.play();
           }
         }
       };
