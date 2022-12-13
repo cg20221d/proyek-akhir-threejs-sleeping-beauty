@@ -76,8 +76,9 @@ import "./styles/styles.css"
 var waterometer;
 var doggo;
 var sphere;
-var cloud;
+var cloud, cloud2;
 
+const audio = new Audio("fp-grafkom/src/assets/Drinking sound effect.mp3");
 const textureLoader = new Three.TextureLoader();
 
 export default {
@@ -521,12 +522,32 @@ export default {
           })
       )
 
-      this.scene.add(cloud);
+      const tuft4 = new Three.SphereGeometry(15.5,21,10.5)
+      tuft4.translate(-30,400,50)
+
+      const tuft5 = new Three.SphereGeometry(15.5,21,10.5)
+      tuft5.translate(30,400,50)
+
+      const tuft6 = new Three.SphereGeometry(25.0,21,10.5)
+      tuft6.translate(0,405,50)
+
+      const geo_cld2 = BufferGeometryUtils.mergeBufferGeometries([tuft4, tuft5, tuft6]);
+
+      cloud2 = new Three.Mesh(
+          geo_cld2,
+          new Three.MeshLambertMaterial({
+              color:'white',
+              flatShading:true,
+          })
+      )
+
+      this.scene.add(cloud, cloud2);
 
       function animate_env() {
         shapeOne.rotateY(0.04);
         sphere.rotateY(0.004);
         cloud.rotateZ(0.004);
+        cloud2.rotateZ(0.007);
       }
 
       this.renderer.setAnimationLoop(animate_env);
@@ -558,8 +579,6 @@ export default {
       // For mouse interaction
       this.pointer = new Three.Vector2();
       this.raycaster = new Three.Raycaster();
-
-      const audio = new Audio("fp-grafkom/src/assets/Drinking sound effect.mp3");
 
       const onMouseDown = (event) => {
         this.pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
