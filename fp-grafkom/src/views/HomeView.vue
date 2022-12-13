@@ -13,6 +13,7 @@
 <script type="module">
 import * as Three from 'three'
 import * as Tween from '@tweenjs/tween.js'
+import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import back from '../assets/Daylight-Box_Back.png'
@@ -68,6 +69,7 @@ import "./styles/styles.css"
 var waterometer;
 var doggo;
 var sphere;
+var cloud;
 
 const textureLoader = new Three.TextureLoader();
 
@@ -428,9 +430,34 @@ export default {
       var shadowMaterial = new Three.ShadowMaterial({ color: 0xeeeeee });
       shadowMaterial.opacity = 0.5;
 
+      //cloud
+      // const geo = new Three.BufferGeometry()
+
+      const tuft1 = new Three.SphereGeometry(15.5,21,10.5)
+      tuft1.translate(-30,400,0)
+
+      const tuft2 = new Three.SphereGeometry(15.5,21,10.5)
+      tuft2.translate(30,400,0)
+
+      const tuft3 = new Three.SphereGeometry(25.0,21,10.5)
+      tuft3.translate(0,405,0)
+
+      const geo_cld = BufferGeometryUtils.mergeBufferGeometries([tuft1, tuft2, tuft3]);
+
+      cloud = new Three.Mesh(
+          geo_cld,
+          new Three.MeshLambertMaterial({
+              color:'white',
+              flatShading:true,
+          })
+      )
+
+      this.scene.add(cloud);
+
       function animate_env() {
         shapeOne.rotateY(0.04);
         sphere.rotateY(0.004);
+        cloud.rotateZ(0.004);
       }
 
       this.renderer.setAnimationLoop(animate_env);
