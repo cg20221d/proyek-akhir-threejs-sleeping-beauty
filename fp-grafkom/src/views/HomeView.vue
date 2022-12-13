@@ -95,6 +95,7 @@ export default {
       air: 0,
       username: "fadhilichlas60",
       level: 1,
+      state: 1,
       mixer: 0,
     };
   },
@@ -130,6 +131,7 @@ export default {
           if (date == today) {
             this.air = this.user.day[harike].air;
             this.level = this.user.day[harike].level;
+            this.state = this.user.day[harike].state;
             console.log("Air = " + this.air);
           }
           else {
@@ -138,13 +140,19 @@ export default {
             console.log(this.level);
             // this.user.day[harike + 1].air = 0;
             // this.user.day[harike + 1].date = today;
-            // if(this.user.day[harike].air < 4) {
-            //   this.user.day[harike + 1] = this.user.day[harike].state + 1;
-            // } else {
-            //   this.user.day[harike + 1] = 1;
-            // }
+            if(this.user.day[harike].air < 4 && this.user.day[harike].state < 3) {
+              this.user.day[harike + 1] = this.user.day[harike].state + 1;
+              this.state = this.user.day[harike].state + 1;
+            } else {
+              this.user.day[harike + 1] = 1;
+              this.state = 1;
+            }
             console.log(this.user);
           }
+            console.log("Current State = ", this.state);
+            if(this.state == 1) console.log("Pet kamu sehat!");
+            else if(this.state == 2) console.log("Pet kamu sekarat!");
+            else console.log("Pet kamu sudah mati:((");
         }
       }
       catch {
