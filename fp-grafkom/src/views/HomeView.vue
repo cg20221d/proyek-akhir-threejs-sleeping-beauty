@@ -10,7 +10,7 @@
   <audio 
   autoplay
   loop
-  src="proyek-akhir-threejs-sleeping-beauty/fp-grafkom/src/assets/Dorothy (Remastered).mp3"></audio>
+  src="fp-grafkom/public/three-assets/Dorothy (Remastered).mp3"></audio>
   </div> -->
 </template>
 
@@ -79,7 +79,7 @@ var piggy;
 var sphere;
 var cloud, cloud2;
 
-const audio = new Audio("fp-grafkom/src/assets/Drinking sound effect.mp3");
+const audio = new Audio("fp-grafkom/public/three-assets/Drinking sound effect.mp3");
 const textureLoader = new Three.TextureLoader();
 
 export default {
