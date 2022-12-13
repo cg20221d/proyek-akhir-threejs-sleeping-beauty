@@ -79,8 +79,8 @@ var piggy;
 var sphere;
 var cloud, cloud2;
 
-const audio = new Audio("fp-grafkom/src/assets/Drinking sound effect.mp3");
-const textureLoader = new Three.TextureLoader();
+// const audio = new Audio("fp-grafkom/src/assets/Drinking sound effect.mp3");
+// const textureLoader = new Three.TextureLoader();
 
 export default {
   data() {
