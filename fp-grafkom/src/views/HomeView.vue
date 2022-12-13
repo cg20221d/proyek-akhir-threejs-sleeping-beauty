@@ -75,38 +75,73 @@ export default {
   data() {
     return {
       renderer: null,
-      air: 0,
       count: 0,
       isActive: true,
       pointer: null,
       raycaster: null,
-      user: [],
-      username: "CNzGlvwWnNfZxzQW1Cz0",
-      level: 0,
-      mixer: 0,
       clock: new Three.Clock(),
+      // User data
+      user: null,
+      air: 0,
+      username: "fadhilichlas60",
+      level: 1,
+      mixer: 0,
     };
+  },
+  beforeMount() {
   },
   mounted() {
     this.load();
-    this.init();
-    this.animate();
   },
 
   methods: {
     async load() {
       try {
         //   const querySnapshot = await getDocs(collection(db, "TestCollection"));
-        const querySnapshot = await getDocs(collection(db, "TestCollection", this.username, "animals"));
+        const querySnapshot = await getDocs(collection(db, "TestCollection"));
         querySnapshot.forEach((doc) => {
-          console.log(doc.data());
-          this.user.push(doc.data());
+          if(doc.data().username == this.username) {
+            console.log(doc.data());
+            this.user = doc.data();
+            console.log(this.user);
+          }
         })
-        console.log(this.user);
+
+        console.log("Length = " + this.user.day.length);
+
+        if(this.user.day.length > 0) {
+          console.log("Masuk ke length > 0");
+          var tzoffset = (new Date()).getTimezoneOffset() * 60000;
+          var harike = this.user.day.length - 1;
+          var date = new Date(this.user.day[harike].date.seconds * 1000 - tzoffset).toISOString().slice(0, 10);
+          // var date = new Date(this.user.day[this.user.day.length - 1].date.seconds * 1000 ).toISOString().slice(0, 10);
+          var today = new Date().toISOString().slice(0, 10)
+          console.log(date, today);
+          if(date == today) {
+            this.air = this.user.day[harike].air;
+            this.level = this.user.day[harike].level;
+            console.log("Air = " + this.air);
+          }
+          else {
+            this.air = 0;
+            this.level = this.user.day[harike].level;
+            console.log(this.level);
+            // this.user.day[harike + 1].air = 0;
+            // this.user.day[harike + 1].date = today;
+            // if(this.user.day[harike].air < 4) {
+            //   this.user.day[harike + 1] = this.user.day[harike].state + 1;
+            // } else {
+            //   this.user.day[harike + 1] = 1;
+            // }
+            console.log(this.user);
+          }
+        }
       }
       catch {
         console.log("error");
       }
+      this.init();
+      this.animate();
     },
     init() {
       this.scene = new Three.Scene();
@@ -153,9 +188,7 @@ export default {
       for (let i = 0; i < 6; i++)
         materialArray[i].side = Three.BackSide;
 
-      const loader = new GLTFLoader()
-
-      const ambientLight = new Three.HemisphereLight(
+        const ambientLight = new Three.HemisphereLight(
         0xffffff, // bright sky color
         0x222222, // dim ground color
         1 // intensity
@@ -163,6 +196,11 @@ export default {
       const mainLight = new Three.DirectionalLight(0xffffff, 4.0)
       mainLight.position.set(15, 8, -3)
       this.scene.add(ambientLight, mainLight)
+
+     
+      console.log("Level di init = " + this.level)
+      if (this.level == 1) {
+        const loader = new GLTFLoader()
       loader.load(
         '/three-assets/dog1.gltf',
         gltf => {
@@ -172,7 +210,7 @@ export default {
           doggo.rotateY(-600)
           this.scene.add(doggo)
           doggo.position.y = -17;
-          this.level = 1;
+          // this.level = 1;
 
           this.mixer = new Three.AnimationMixer(doggo);
 
@@ -184,7 +222,19 @@ export default {
         undefined,
         undefined
       )
-
+        }
+      if (this.level == 2) {
+          this.level2();
+        }
+        if (this.level == 3) {
+          this.level3();
+        }
+        if (this.level == 4) {
+          this.level4();
+        }
+        if (this.level == 5) {
+          this.level5();
+        }
 
       let skyboxGeo = new Three.BoxGeometry(10000, 10000, 10000);
       this.skybox = new Three.Mesh(skyboxGeo, materialArray);
@@ -700,14 +750,59 @@ export default {
       this.mountains.translateY(50)
     },
     level2() {
-      this.air = 0;
+      
       this.scene.remove(doggo);
       const loader = new GLTFLoader()
+      if(this.air < 4)
+        loader.load(
+          '/three-assets/dog2.gltf',
+          gltf => {
+            doggo = gltf.scene;
+            doggo.scale.set(65, 65, 65);
+            // doggo.rotateY(-Math.PI/7)
+            doggo.rotateY(-600)
+            this.scene.add(doggo)
+            doggo.position.y = -17;
+            this.mixer = new Three.AnimationMixer(doggo);
+
+            const clips = gltf.animations;
+            const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction.001');
+            const action = this.mixer.clipAction(clip);
+            action.play();
+          },
+          undefined,
+          undefined
+        )
+      else
+        loader.load(
+          '/three-assets/dog2.gltf',
+          gltf => {
+            doggo = gltf.scene;
+            doggo.scale.set(85, 85, 85);
+            // doggo.rotateY(-Math.PI/7)
+            doggo.rotateY(-600)
+            this.scene.add(doggo)
+            doggo.position.y = -17;
+            this.mixer = new Three.AnimationMixer(doggo);
+
+            const clips = gltf.animations;
+            const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction.001');
+            const action = this.mixer.clipAction(clip);
+            action.play();
+          },
+          undefined,
+          undefined
+        )
+    },
+    level3() {
+      this.scene.remove(doggo);
+      const loader = new GLTFLoader()
+      if(this.air < 4)
       loader.load(
-        '/three-assets/dog2.gltf',
+        '/three-assets/dog3.gltf',
         gltf => {
           doggo = gltf.scene;
-          doggo.scale.set(65, 65, 65);
+          doggo.scale.set(50, 50, 50);
           // doggo.rotateY(-Math.PI/7)
           doggo.rotateY(-600)
           this.scene.add(doggo)
@@ -722,11 +817,7 @@ export default {
         undefined,
         undefined
       )
-    },
-    level3() {
-      this.air = 0;
-      this.scene.remove(doggo);
-      const loader = new GLTFLoader()
+      else
       loader.load(
         '/three-assets/dog3.gltf',
         gltf => {
@@ -749,9 +840,10 @@ export default {
 
     },
     level4() {
-      this.air = 0;
+      
       this.scene.remove(doggo);
       const loader = new GLTFLoader()
+      if(this.air < 4)
       loader.load(
         '/three-assets/dog4.gltf',
         gltf => {
@@ -771,12 +863,33 @@ export default {
         undefined,
         undefined
       )
+      else
+      loader.load(
+        '/three-assets/dog4.gltf',
+        gltf => {
+          doggo = gltf.scene;
+          doggo.scale.set(65, 65, 65);
+          // doggo.rotateY(-Math.PI/7)
+          // doggo.rotateY(-600)
+          this.scene.add(doggo)
+          doggo.position.y = -17;
+          this.mixer = new Three.AnimationMixer(doggo);
+
+          const clips = gltf.animations;
+          const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+          const action = this.mixer.clipAction(clip);
+          action.play();
+        },
+        undefined,
+        undefined
+      )
 
     },
     level5() {
-      this.air = 0;
+      
       this.scene.remove(doggo);
       const loader = new GLTFLoader()
+      if(this.air < 4)
       loader.load(
         '/three-assets/dog5.gltf',
         gltf => {
@@ -796,12 +909,32 @@ export default {
         undefined,
         undefined
       )
+      else
+      loader.load(
+        '/three-assets/dog5.gltf',
+        gltf => {
+          doggo = gltf.scene;
+          doggo.scale.set(65, 65, 65);
+          // doggo.rotateY(-Math.PI/7)
+          doggo.rotateY(-600)
+          this.scene.add(doggo)
+          doggo.position.y = -17;
+          this.mixer = new Three.AnimationMixer(doggo);
+
+          const clips = gltf.animations;
+          const clip = Three.AnimationClip.findByName(clips, 'ArmatureAction');
+          const action = this.mixer.clipAction(clip);
+          action.play();
+        },
+        undefined,
+        undefined
+      )
 
     },
     changeButtonStat() {
       this.air += 1;
       console.log(this.air);
-      console.log("this.level =" + this.level)
+      console.log("this.level = " + this.level)
       if (this.air <= 8) {
         waterometer.geometry.dispose();
         waterometer.geometry = new Three.CapsuleGeometry(20, this.air / 8 * 200, 32, 16);
@@ -863,7 +996,13 @@ export default {
 
       }
       if (this.air == 9) {
+        
         this.level += 1;
+        this.air = 0;
+        console.log("Air changed to " + this.air);
+        waterometer.geometry.dispose();
+        waterometer.geometry = new Three.CapsuleGeometry(20, this.air / 8 * 200, 32, 16);
+        waterometer.position.y = (-(100 - this.air / 8 * 200) / 2);
 
         if (this.level == 2) {
           this.level2();
@@ -878,22 +1017,22 @@ export default {
           this.level5();
         }
       }
-      if (this.air == 9) {
-        this.level += 1;
+      // if (this.air == 9) {
+      //   this.level += 1;
 
-        if (this.level == 2) {
-          this.level2();
-        }
-        if (this.level == 3) {
-          this.level3();
-        }
-        if (this.level == 4) {
-          this.level4();
-        }
-        if (this.level == 5) {
-          this.level5();
-        }
-      }
+      //   if (this.level == 2) {
+      //     this.level2();
+      //   }
+      //   if (this.level == 3) {
+      //     this.level3();
+      //   }
+      //   if (this.level == 4) {
+      //     this.level4();
+      //   }
+      //   if (this.level == 5) {
+      //     this.level5();
+      //   }
+      // }
     },
   },
 }
