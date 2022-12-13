@@ -331,12 +331,20 @@ export default {
       // Position and scale the grass blade instances randomly.
 
       for (let i = 0; i < instanceNumber; i++) {
-
+        var x = Math.random();
+        var max =  Math.sqrt(1 - (x * x));
+        var z = Math.random() * max * 1.08;
         dummy.position.set(
-          (Math.random() - 0.5) * 400,
+          ( (Math.random() < 0.5 ? -1 : 1) * x ) * 190,
           -15,
-          (Math.random() - 0.3) * -450
+          ( (Math.random() < 0.5 ? -1 : 1) * z - 0.422) * 190
         );
+
+        // dummy.position.set(
+        //   (Math.random() - 0.5) * 400,
+        //   -15,
+        //   (Math.random() - 0.3) * -450
+        // );
 
         dummy.scale.setScalar(0.5 + Math.random() * 10);
 
