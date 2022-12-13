@@ -29,9 +29,9 @@ import top from '../assets/Daylight-Box_Top.png'
 import sun from '../assets/sun8.jpg'
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { EffectComposer } from "/node_modules/three/examples/jsm/postprocessing/EffectComposer.js";
-import { RenderPass } from "/node_modules/three/examples/jsm/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "/node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js";
+// import { EffectComposer } from "/node_modules/three/examples/jsm/postprocessing/EffectComposer.js";
+// import { RenderPass } from "/node_modules/three/examples/jsm/postprocessing/RenderPass.js";
+// import { UnrealBloomPass } from "/node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC0APgcvMKt4XU3jRB0fO9HAX3_doI3m48",
@@ -406,21 +406,21 @@ export default {
 
       //sphere
 
-      const renderScene = new RenderPass(this.scene, this.camera);
-const bloomPass = new UnrealBloomPass(
-  new Three.Vector2(window.innerWidth, window.innerHeight),
-  1.5,
-  0.4,
-  0.85
-);
-bloomPass.threshold = 10;
-bloomPass.strength = 10; //intensity of glow
-bloomPass.radius = 10;
-const bloomComposer = new EffectComposer(this.renderer);
-bloomComposer.setSize(window.innerWidth, window.innerHeight);
-bloomComposer.renderToScreen = true;
-bloomComposer.addPass(renderScene);
-bloomComposer.addPass(bloomPass);
+//       const renderScene = new RenderPass(this.scene, this.camera);
+// const bloomPass = new UnrealBloomPass(
+//   new Three.Vector2(window.innerWidth, window.innerHeight),
+//   1.5,
+//   0.4,
+//   0.85
+// );
+// bloomPass.threshold = 10;
+// bloomPass.strength = 10; //intensity of glow
+// bloomPass.radius = 10;
+// const bloomComposer = new EffectComposer(this.renderer);
+// bloomComposer.setSize(window.innerWidth, window.innerHeight);
+// bloomComposer.renderToScreen = true;
+// bloomComposer.addPass(renderScene);
+// bloomComposer.addPass(bloomPass);
 
       const geometry = new Three.SphereGeometry(45, 62, 46);
       const material_sphr = new Three.MeshBasicMaterial({
@@ -432,8 +432,8 @@ bloomComposer.addPass(bloomPass);
       sphere.translateY(250);
       
       this.scene.add(sphere);
-      bloomComposer.setSize(window.innerWidth, window.innerHeight);
-      this.scene.add(bloomComposer);
+      // bloomComposer.setSize(window.innerWidth, window.innerHeight);
+      // this.scene.add(bloomComposer);
       // const renderScene = new RenderPass(this.scene, this.camera);
       // const bloomPass = new UnrealBloomPass(
       //   new Three.Vector2(window.innerWidth, window.innerHeight),
